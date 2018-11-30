@@ -5,7 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     swift: DataTypes.STRING
   }, {});
   Guide.associate = function(models) {
-    Guide.belongsTo(models['User'], {foreignKey: {allowNull: false, name:'user_id'}})
+    Guide.belongsTo(models['User'], {foreignKey: {allowNull: false, name:'user_id'}});
+    Guide.hasMany(models['Activity'], {foreignKey: {allowNull:false, name:'guide_id'}})
   };
   return Guide;
 };
