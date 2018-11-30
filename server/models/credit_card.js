@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     expiry_date: DataTypes.DATEONLY
   }, {});
   Credit_Card.associate = function(models) {
-    // associations can be defined here
+    Credit_Card.belongsTo(models['User'], {foreignKey: {allowNull: false, name:'user_id'}})
   };
   return Credit_Card;
 };
