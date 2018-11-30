@@ -10,6 +10,9 @@ router.get('/', function(req, res, next) {
 // create user
 router.post('/create_user', user_controller.create_user);
 
+// add credit card to user
+router.post('/add_credit_card', user_controller.add_credit_card)
+
 
 
 module.exports = router;
