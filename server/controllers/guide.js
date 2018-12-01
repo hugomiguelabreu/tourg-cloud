@@ -20,7 +20,8 @@ exports.create_activity = function(req, res) {
             description: req.body.description,
             city: req.body.city,
             date: req.body.date,
-            price: req.body.price
+            price: req.body.price,
+            guide_id: req.body.guide_id
         })
         .then((act) => res.status(201).send(act))
         .catch((error) => res.status(400).send(error));
