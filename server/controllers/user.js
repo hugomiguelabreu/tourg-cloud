@@ -1,6 +1,8 @@
 const User = require('../models').User;
+const Guide = require('../models').Guide;
 const Credit_Card = require('../models').Credit_Card;
 const Activity = require('../models').Activity;
+const Message = require('../models').Message;
 
 // create user -> register
 exports.create_user = function(req, res) {
@@ -43,4 +45,17 @@ exports.add_activity = function (req, res, next) {
         }).catch((error) => res.status(400).send(error));
 
     }).catch((error) => res.status(400).send(error));
+};
+
+exports.send_message = function (req, res, next) { // true user -> guide | false guide -> user
+
+    return Message
+        .create({
+            msg: req.body.msg,
+            way: true,
+            user_id: req.body.user_id,
+            guide_id: req.body.guide_id
+        })
+        .then((cc) => res.status(201).send(cc))
+        .catch((error) => res.status(400).send(error));
 };

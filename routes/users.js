@@ -16,4 +16,6 @@ router.post('/add_credit_card', user_controller.add_credit_card);
 
 router.post('/add_activity', user_controller.add_activity);
 
+router.post('/send_message', user_controller.send_message);
+
 module.exports = router;

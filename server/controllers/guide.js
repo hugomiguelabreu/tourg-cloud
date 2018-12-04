@@ -1,5 +1,6 @@
 const Guide = require('../models').Guide;
 const Activity = require('../models').Activity;
+const Message = require('../models').Message;
 
 // create guide -> register
 // TODO remove this endpoint ???
@@ -24,5 +25,18 @@ exports.create_activity = function(req, res) {
             guide_id: req.body.guide_id
         })
         .then((act) => res.status(201).send(act))
+        .catch((error) => res.status(400).send(error));
+};
+
+exports.send_message = function (req, res, next) { // true user -> guide | false guide -> user
+
+    return Message
+        .create({
+            msg: req.body.msg,
+            way: false,
+            user_id: req.body.user_id,
+            guide_id: req.body.guide_id
+        })
+        .then((cc) => res.status(201).send(cc))
         .catch((error) => res.status(400).send(error));
 };
