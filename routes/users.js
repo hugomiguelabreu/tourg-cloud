@@ -14,4 +14,6 @@ router.post('/create_user', user_controller.create_user);
 // TODO check if credit card exists ???
 router.post('/add_credit_card', user_controller.add_credit_card);
 
+router.post('/add_activity', user_controller.add_activity);
+
 module.exports = router;
