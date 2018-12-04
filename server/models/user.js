@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     photo_path: DataTypes.STRING
   }, {});
   User.associate = function(models) {
-    // associations can be defined here
+    User.belongsToMany(models.Activity, {through: 'Activity_Users', foreignKey:'user_id'})
   };
   return User;
 };

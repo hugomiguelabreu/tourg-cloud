@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.DECIMAL(6,2)
   }, {});
   Activity.associate = function(models) {
-    // 
+    Activity.belongsToMany(models.User, {through: 'Activity_Users', foreignKey: 'activity_id'})
   };
   return Activity;
 };
