@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Guide.associate = function(models) {
     Guide.belongsTo(models['User'], {foreignKey: {allowNull: false, name:'user_id'}});
-    Guide.hasMany(models['Activity'], {foreignKey: {allowNull:false, name:'guide_id'}})
+    Guide.hasMany(models['Activity'], {foreignKey: {allowNull:false, name:'guide_id'}});
+    Guide.hasMany(models.Message, {foreignKey: 'guide_id'})
   };
   return Guide;
 };

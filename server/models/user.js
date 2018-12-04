@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
     photo_path: DataTypes.STRING
   }, {});
   User.associate = function(models) {
-    User.belongsToMany(models.Activity, {through: 'Activity_Users', foreignKey:'user_id'})
+    User.belongsToMany(models.Activity, {through: 'Activity_Users', foreignKey:'user_id'});
+    User.hasMany(models.Message, {foreignKey: 'user_id'})
   };
   return User;
 };
