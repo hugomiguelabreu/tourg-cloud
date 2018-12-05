@@ -4,6 +4,7 @@ const Activity = require('../models').Activity;
 const Message = require('../models').Message;
 const Complaint = require('../models').Complaint;
 const Activity_Evaluation = require('../models').Activity_Evaluation;
+const Guide_Evaluation = require('../models').Guide_Evaluation;
 
 // create user -> register
 exports.create_user = function(req, res) {
@@ -75,13 +76,27 @@ exports.add_complaint = function (req, res, next) { // true user -> guide | fals
 };
 
 //TODO check if user went to the activity
-exports.evaluate_activity = function (req, res, next) { // true user -> guide | false guide -> user
+exports.evaluate_activity = function (req, res, next) {
 
     return Activity_Evaluation
         .create({
             text: req.body.text,
             user_id: req.body.user_id,
             activity_id: req.body.activity_id,
+            score: req.body.score
+        })
+        .then((cc) => res.status(201).send(cc))
+        .catch((error) => res.status(400).send(error));
+};
+
+//TODO check if user went to the activity with this guide
+exports.evaluate_guide = function (req, res, next) {
+
+    return Guide_Evaluation
+        .create({
+            text: req.body.text,
+            user_id: req.body.user_id,
+            guide_id: req.body.guide_id,
             score: req.body.score
         })
         .then((cc) => res.status(201).send(cc))

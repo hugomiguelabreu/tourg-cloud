@@ -22,4 +22,6 @@ router.post('/add_complaint', user_controller.add_complaint);
 
 router.post('/evaluate_activity', user_controller.evaluate_activity);
 
+router.post('/evaluate_guide', user_controller.evaluate_guide);
+
 module.exports = router;
