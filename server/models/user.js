@@ -12,7 +12,8 @@ module.exports = (sequelize, DataTypes) => {
         User.belongsToMany(models.Activity, {through: 'Activity_Users', foreignKey:'user_id'});
         User.hasMany(models.Message, {foreignKey: 'user_id'});
         User.hasMany(models.Complaint, {foreignKey: 'user_id'});
-        User.hasMany(models.Activity_Evaluation, {foreignKey: 'user_id'})
+        User.hasMany(models.Activity_Evaluation, {foreignKey: 'user_id'});
+        User.hasMany(models.Guide_Evaluation, {foreignKey: 'user_id'});
     };
     return User;
 };
