@@ -13,7 +13,10 @@ username: app
 password: secret
 databse: tourg_dev
 ```
-install packages with npm install
+install packages with 
+```
+npm install
+```
 
 install sequelize-cli:
 ```
