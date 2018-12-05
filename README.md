@@ -23,6 +23,10 @@ to run sequelize:
 ```
 node_modules/.bin/sequelize [commnad]
 ```
+to run migrations (criar as tabelas na base de dados)
+```
+node_modules/.bin/sequelize db:migrate
+```
 
 [sequelize docs](http://docs.sequelizejs.com/manual/installation/getting-started.html) (são uma merda)
 
