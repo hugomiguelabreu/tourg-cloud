@@ -20,4 +20,6 @@ router.post('/send_message', user_controller.send_message);
 
 router.post('/add_complaint', user_controller.add_complaint);
 
+router.post('/evaluate_activity', user_controller.evaluate_activity);
+
 module.exports = router;
