@@ -10,8 +10,9 @@ module.exports = (sequelize, DataTypes) => {
     }, {});
     User.associate = function(models) {
         User.belongsToMany(models.Activity, {through: 'Activity_Users', foreignKey:'user_id'});
-        User.hasMany(models.Message, {foreignKey: 'user_id'})
-        User.hasMany(models.Complaint, {foreignKey: 'user_id'})
+        User.hasMany(models.Message, {foreignKey: 'user_id'});
+        User.hasMany(models.Complaint, {foreignKey: 'user_id'});
+        User.hasMany(models.Activity_Evaluation, {foreignKey: 'user_id'})
     };
     return User;
 };
