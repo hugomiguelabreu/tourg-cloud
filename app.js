@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
 var guideRouter = require('./routes/guide');
+var apiRouter = require('./routes/api');
 
 var app = express();
 
@@ -21,7 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api/', indexRouter);
+app.use('/api/', apiRouter);
 app.use('/api/user', usersRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/guide', guideRouter);
