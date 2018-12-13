@@ -1,6 +1,8 @@
 const Guide = require('../models').Guide;
 const Activity = require('../models').Activity;
 const Message = require('../models').Message;
+const Activity_Date = require('../models').Activity_Date;
+const models = require('../models')
 
 // create guide -> register
 // TODO remove this endpoint ???
@@ -15,16 +17,22 @@ exports.create_guide = function(req, res) {
         .catch((error) => res.status(400).send(error));
 };
 
-exports.create_activity = function(req, res) {
+exports.create_activity = function(req, res, next) {
+
     return Activity
         .create({
+            guide_id: req.body.guide_id,
             description: req.body.description,
-            city: req.body.city,
-            date: req.body.date,
-            price: req.body.price,
-            guide_id: req.body.guide_id
+            city: req.body.city, // TODO add country and coordinates
+            Activity_Dates: {
+                price: req.body.price,
+                timestamp: req.body.timestamp
+            }
+        },
+        {
+            include: Activity_Date
         })
-        .then((act) => res.status(201).send(act))
+        .then((cc) => res.status(201).send(cc))
         .catch((error) => res.status(400).send(error));
 };
 
