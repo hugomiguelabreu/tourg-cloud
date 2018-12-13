@@ -5,9 +5,12 @@ const Message = require('../models').Message;
 const Complaint = require('../models').Complaint;
 const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
+var passport = require("passport");
+var jwt = require('jsonwebtoken');
 const Booking = require('../models').Booking;
 
-// create user -> register
+
+/* user sign up */
 exports.create_user = function(req, res) {
     return User
         .create({
@@ -20,6 +23,35 @@ exports.create_user = function(req, res) {
         .then((user) => res.status(201).send(user))
         .catch((error) => res.status(400).send(error));
 };
+
+/* user log in */
+exports.login = function(req,res){
+    User.findAll({ where:{ email: req.body.email ,
+                           password: req.body.password 
+                         }
+                })
+                .then(function(user){
+                        if(typeof user[0] === "undefined") {
+                            res.status(401).json({message:"invalid username or password"});
+                        } 
+                        else if(user[0].password === req.body.password) {
+                                var payload = {id:user[0].id};
+                                var token = jwt.sign(payload,process.env.key);
+                                user[0].password='';
+                                res.json({ token: token, user: user[0]});
+                             }
+                             else{
+                                res.status(401).json({message:"passwords did not match"});
+                            }
+                })
+                .catch(function(user){
+                        res.status(400).json({message:"Bad Request"});
+                });
+};
+
+
+
+
 
 // add credit card
 exports.add_credit_card = function(req, res) {
