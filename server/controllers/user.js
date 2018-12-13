@@ -23,14 +23,30 @@ exports.create_user = function(req, res) {
 
 // add credit card
 exports.add_credit_card = function(req, res) {
-    return Credit_Card
-        .create({
-            number: req.body.number,
-            expiry_date: req.body.expiry_date,
-            user_id: req.body.user_id
-        })
-        .then((cc) => res.status(201).send(cc))
+
+    user = User.findAll({
+        where: {
+            email: req.body.email
+        }
+    }).then(function (user) {
+
+        console.log(user[0].name);
+        res.status(201).send(user)
+
+    })
         .catch((error) => res.status(400).send(error));
+
+
+
+
+    // return Credit_Card
+    //     .create({
+    //         number: req.body.number,
+    //         expiry_date: req.body.expiry_date,
+    //         user_id: req.body.user_id
+    //     })
+    //     .then((cc) => res.status(201).send(cc))
+    //     .catch((error) => res.status(400).send(error));
 };
 
 exports.add_activity = function (req, res, next) {
@@ -94,6 +110,18 @@ exports.evaluate_guide = function (req, res, next) {
             user_id: req.body.user_id,
             guide_id: req.body.guide_id,
             score: req.body.score
+        })
+        .then((cc) => res.status(201).send(cc))
+        .catch((error) => res.status(400).send(error));
+};
+
+exports.book_activity = function (req, res, next) {
+
+    return Booking
+        .create({
+            user_id: req.body.user_id,
+            activity_id: req.body.activity_id,
+            activity_date_id: req.body.activity_date_id
         })
         .then((cc) => res.status(201).send(cc))
         .catch((error) => res.status(400).send(error));
