@@ -7,6 +7,7 @@ const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
+const Booking = require('../models').Booking;
 
 
 /* user sign up */
@@ -66,19 +67,14 @@ exports.add_credit_card = function(req, res) {
 
 exports.add_activity = function (req, res, next) {
 
-    User.findById(req.body.user_id).then(function (user) {
-
-        Activity.findById(req.body.activity_id).then(function (activity) {
-
-            user.addActivity(activity, { through: { date: req.body.date }})
-                .then(function (ac) {
-                    res.status(201).send(ac[0][0])
-                })
-                .catch((error) => res.status(400).send(error)); // TODO empty errors ???
-
-        }).catch((error) => res.status(400).send(error));
-
-    }).catch((error) => res.status(400).send(error));
+    return Booking
+        .create({
+            user_id: req.body.user_id,
+            activity_id: req.body.activity_id,
+            timestamp: req.body.timestamp
+        })
+        .then((cc) => res.status(201).send(cc))
+        .catch((error) => res.status(400).send(error));
 };
 
 exports.send_message = function (req, res, next) { // true user -> guide | false guide -> user
