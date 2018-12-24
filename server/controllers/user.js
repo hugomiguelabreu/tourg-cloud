@@ -20,8 +20,13 @@ exports.create_user = function(req, res) {
             phone: req.body.phone,
             bio: req.body.bio
         })
-        .then((user) => res.status(201).send(user))
-        .catch((error) => res.status(400).send(error));
+        .then(function(user){ 
+            user.password = '';
+            res.status(201).send(user);
+        })
+        .catch(function(error){ 
+            res.status(400).send(error);
+         });
 };
 
 /* user log in */

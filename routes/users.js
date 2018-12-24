@@ -28,7 +28,7 @@ module.exports = router;
 
 /* ============ Comments ========== */
 
-/* Route that needs authentication, use example :
+/* Route that needs authentication, use example : 
 router.get("/secret", passport.authenticate('jwt', { session: false }) ,function(req, res){
         console.log("Key :" + process.env.key);
 
