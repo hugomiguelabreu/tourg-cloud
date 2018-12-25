@@ -1,21 +1,95 @@
 const Guide = require('../models').Guide;
+const User = require('../models').User;
 const Activity = require('../models').Activity;
 const Message = require('../models').Message;
 const Activity_Date = require('../models').Activity_Date;
-const models = require('../models')
+const models = require('../models');
 
-// create guide -> register
-// TODO remove this endpoint ???
+var passport = require("passport");
+var jwt = require('jsonwebtoken');
+var sequelize = models.sequelize;
+
+
+
+/* -------------------------- Código em desenvolvimento -------------------- */
+/* guide sign-up  - Em desenvolvimento */
+ /* Notes: */
+ /* Está a fazer RollBack no guide - mas não devia */
+ /* Input:
+
+    POST http://localhost:3000/api/guide/register
+
+    email
+    password
+    name
+    phone
+    bio
+    account_number
+    swift
+*/
 exports.create_guide = function(req, res) {
-    return Guide
-        .create({
-            account_number: req.body.account_number,
-            swift: req.body.swift,
-            user_id: req.body.user_id
-        })
-        .then((user) => res.status(201).send(user))
-        .catch((error) => res.status(400).send(error));
+
+  return sequelize.transaction(function (t) {
+
+    return User.create({
+      email: req.body.email,
+      password: req.body.password,
+      name: req.body.name,
+      phone: req.body.phone,
+      bio: req.body.bio
+    }, {transaction: t}).then(function(user) {
+      return Guide.create({
+        account_number: req.body.account_number,
+        swift: req.body.swift,
+        user_id: user.email
+      }, {transaction: t});
+    });
+
+ }).then(function(result) {
+   console.log("Transaction Succeed");
+ }).catch(function(err){
+   console.log("Transaction Error");
+   res.status(400).send(err);
+ });
+
 };
+
+
+/* guide log-in  - Em desenvolvimento */
+exports.login = function(req,res){
+    User.findAll({ where:{ user_id: req.body.email ,
+                           password: req.body.password
+                         }
+                })
+                .then(function(user){
+                        if(typeof user[0] === "undefined") {
+                            res.status(401).json({message:"invalid username or password"});
+                        }
+                        else if(user[0].password === req.body.password) {
+                                var payload = {id:user[0].id};
+                                var token = jwt.sign(payload,process.env.key);
+
+                                Guide.findAll({where:{user_id:req.body.email}}).then(function(guide){
+                                  guide[0].password='';
+                                  res.json({ token: token, user: guide[0]});
+                                }).catch(function(guide){
+                                  res.status(400).json({message:"Bad Request"});
+                                });
+
+                             }
+                             else{
+                                res.status(401).json({message:"passwords did not match"});
+                            }
+                })
+                .catch(function(user){
+                        res.status(400).json({message:"Bad Request"});
+                });
+};
+
+/* --------------------------------------------------------------------------- */
+
+
+
 
 exports.create_activity = function(req, res, next) {
 
