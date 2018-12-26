@@ -50,9 +50,9 @@ exports.create_guide = function(req, res) {
             }, {transaction: t});
         });
 
-    }).then(function(result) {
+    }).then(function(guide) {
         console.log("Transaction Succeed");
-        res.status(200).send([c_user, result]) // [created user, created guide]
+        res.status(200).json({ user: c_user, guide: guide});
     }).catch(function(err){
         console.log("Transaction Error");
         res.status(400).send(err);
@@ -63,8 +63,9 @@ exports.create_guide = function(req, res) {
 
 /* guide log-in  - Em desenvolvimento */
 exports.login = function(req,res){
-    User.findAll({ where:{ user_id: req.body.email ,
-                           password: req.body.password
+    User.findAll({ where:{
+                            email: req.body.email ,
+                            password: req.body.password
                          }
                 })
                 .then(function(user){
@@ -75,20 +76,21 @@ exports.login = function(req,res){
                                 var payload = {id:user[0].id};
                                 var token = jwt.sign(payload,process.env.key);
 
-                                Guide.findAll({where:{user_id:req.body.email}}).then(function(guide){
-                                  guide[0].password='';
-                                  res.json({ token: token, user: guide[0]});
-                                }).catch(function(guide){
-                                  res.status(400).json({message:"Bad Request"});
-                                });
+                                Guide.findAll({where:{user_id:user[0].id}})
+                                    .then(function(guide){
+                                        guide[0].password='';
+                                        res.json({ token: token, user: guide[0]});
+                                    }).catch(function(guide){
+                                        res.status(400).json({message:"Bad Request"});
+                                    });
 
                              }
                              else{
                                 res.status(401).json({message:"passwords did not match"});
                             }
                 })
-                .catch(function(user){
-                        res.status(400).json({message:"Bad Request"});
+                .catch(function(err){
+                        res.status(400).send(err);
                 });
 };
 
