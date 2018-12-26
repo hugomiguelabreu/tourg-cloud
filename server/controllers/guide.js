@@ -29,28 +29,34 @@ var sequelize = models.sequelize;
 */
 exports.create_guide = function(req, res) {
 
-  return sequelize.transaction(function (t) {
+    let c_user = '';
 
-    return User.create({
-      email: req.body.email,
-      password: req.body.password,
-      name: req.body.name,
-      phone: req.body.phone,
-      bio: req.body.bio
-    }, {transaction: t}).then(function(user) {
-      return Guide.create({
-        account_number: req.body.account_number,
-        swift: req.body.swift,
-        user_id: user.email
-      }, {transaction: t});
+    return sequelize.transaction(function (t) {
+
+        return User.create({
+            email: req.body.email,
+            password: req.body.password,
+            name: req.body.name,
+            phone: req.body.phone,
+            bio: req.body.bio
+        }, {transaction: t}).then(function(user) {
+
+            c_user = user;
+
+            return Guide.create({
+                account_number: req.body.account_number,
+                swift: req.body.swift,
+                user_id: user.id
+            }, {transaction: t});
+        });
+
+    }).then(function(result) {
+        console.log("Transaction Succeed");
+        res.status(200).send([c_user, result]) // [created user, created guide]
+    }).catch(function(err){
+        console.log("Transaction Error");
+        res.status(400).send(err);
     });
-
- }).then(function(result) {
-   console.log("Transaction Succeed");
- }).catch(function(err){
-   console.log("Transaction Error");
-   res.status(400).send(err);
- });
 
 };
 
