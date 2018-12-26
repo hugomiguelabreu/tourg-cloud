@@ -8,7 +8,7 @@ var logger = require('morgan');
 var bodyParser = require("body-parser");
 var jwt = require('jsonwebtoken');
 
-var indexRouter = require('./routes/index');
+var indexRouter = require('./routes/api');
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
 var guideRouter = require('./routes/guide');
