@@ -160,14 +160,30 @@ exports.evaluate_guide = function (req, res, next) {
 
 exports.book_activity = function (req, res, next) { //TODO verify token
 
-    return Booking
-        .create({
-            user_id: req.body.user_id,
-            activity_id: req.body.activity_id,
-            activity_date_id: req.body.activity_date_id
+    User.findById(req.body.user_id) //TODO transaction ???
+        .then(function (user) {
+
+            Booking.create({
+                user_id: user.id,
+                activity_id: req.body.activity_id,
+                activity_date_id: req.body.activity_date_id
+
+            }).then(function (booking) {
+
+                user.addBooking(booking)
+                    .then(function (result) {
+                        res.status(200).send(booking)
+                    }).catch(function (err) {
+                    res.status(400).send(err)
+                })
+
+            }).catch(function (err) {
+                res.status(400).send(err)
+            })
+
+        }).catch(function (err) {
+            res.status(400).send(err)
         })
-        .then((cc) => res.status(201).send(cc))
-        .catch((error) => res.status(400).send(error));
 };
 
 exports.bookings = function (req, res, next) { //TODO verify token
@@ -179,8 +195,10 @@ exports.bookings = function (req, res, next) { //TODO verify token
                 .then(function (bookings) {
                     res.status(201).send(bookings)
                 }).catch(function (err) {
-                    res.status(400).json({message: 'something went wrong'})
+                    res.status(400).send(err)
             })
 
+        }).catch(function (err) {
+            res.status(400).send(err)
         })
 };
