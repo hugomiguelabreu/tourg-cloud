@@ -3,7 +3,9 @@ module.exports = (sequelize, DataTypes) => {
     const Activity = sequelize.define('Activity', {
         guide_id: DataTypes.INTEGER, // FK
         description: DataTypes.STRING,
-        city: DataTypes.STRING
+        city: DataTypes.STRING,
+        lat: DataTypes.FLOAT,
+        lng: DataTypes.FLOAT
     }, {});
     Activity.associate = function(models) {
         Activity.hasMany(models.Activity_Evaluation, {foreignKey: 'activity_id'});
