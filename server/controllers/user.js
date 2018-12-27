@@ -59,17 +59,18 @@ exports.update = function(req,res){ // TODO verify token
         .then(function (user) {
 
             user.update({
+                password: req.body.password,
                 name: req.body.name,
                 phone: req.body.phone,
                 bio: req.body.bio
             }).then(function (up_user) {
-                res.status(200).json(user);
+                res.status(200).json(up_user);
             }).catch(function (err) {
-                res.status(400).json({message: "somthing went wrong"})
+                res.status(400).send(err)
             })
 
         }).catch(function (err) {
-            res.status(400).json({message: "somthing went wrong"})
+            res.status(400).send(err)
     })
 };
 
