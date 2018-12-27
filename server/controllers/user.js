@@ -158,7 +158,7 @@ exports.evaluate_guide = function (req, res, next) {
         .catch((error) => res.status(400).send(error));
 };
 
-exports.book_activity = function (req, res, next) { //TODO verify token
+exports.book_activity = function (req, res, next) {
 
     User.findById(req.body.user_id) //TODO transaction ???
         .then(function (user) {
@@ -186,7 +186,7 @@ exports.book_activity = function (req, res, next) { //TODO verify token
         })
 };
 
-exports.bookings = function (req, res, next) { //TODO verify token
+exports.bookings = function (req, res, next) {
 
     User.findById(req.body.user_id) // TODO verify activity_date_id == activity_id ???
         .then(function (user) {
