@@ -105,7 +105,9 @@ exports.create_activity = function(req, res, next) {
         .create({
             guide_id: req.body.guide_id,
             description: req.body.description,
-            city: req.body.city, // TODO add country and coordinates
+            city: req.body.city,
+            lat: req.body.lat,
+            lng: req.body.lng,
             Activity_Dates: {
                 price: req.body.price,
                 timestamp: req.body.timestamp
