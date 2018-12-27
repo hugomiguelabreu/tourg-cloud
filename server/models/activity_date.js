@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     const Activity_Date = sequelize.define('Activity_Date', {
         price: DataTypes.DECIMAL(6,2),
         timestamp: DataTypes.DATE,
-        activity_id: DataTypes.INTEGER
+        activity_id: DataTypes.INTEGER // FK
         },
         {
             timestamps: false

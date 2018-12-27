@@ -1,8 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
     const Activity = sequelize.define('Activity', {
-        activity_id: DataTypes.INTEGER,
-        guide_id: DataTypes.INTEGER,
+        guide_id: DataTypes.INTEGER, // FK
         description: DataTypes.STRING,
         city: DataTypes.STRING
     }, {});
