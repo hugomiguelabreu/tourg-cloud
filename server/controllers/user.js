@@ -100,18 +100,6 @@ exports.add_credit_card = function(req, res) {
     //     .catch((error) => res.status(400).send(error));
 };
 
-exports.add_activity = function (req, res, next) {
-
-    return Booking
-        .create({
-            user_id: req.body.user_id,
-            activity_id: req.body.activity_id,
-            timestamp: req.body.timestamp
-        })
-        .then((cc) => res.status(201).send(cc))
-        .catch((error) => res.status(400).send(error));
-};
-
 exports.send_message = function (req, res, next) { // true user -> guide | false guide -> user
 
     return Message
