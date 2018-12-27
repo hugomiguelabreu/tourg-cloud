@@ -54,6 +54,20 @@ exports.login = function(req,res){
                 });
 };
 
+exports.update = function(req,res){ // TODO verify token
+    User.findById(req.body.id)
+        .then(function (user) {
+
+            user.update({
+                name: req.body.name,
+                phone: req.body.phone,
+                bio: req.body.bio
+            }).then(function (up_user) {
+                res.status(200).json(user);
+            })
+
+        })
+};
 
 
 
