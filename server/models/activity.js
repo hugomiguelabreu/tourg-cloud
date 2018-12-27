@@ -4,9 +4,7 @@ module.exports = (sequelize, DataTypes) => {
         activity_id: DataTypes.INTEGER,
         guide_id: DataTypes.INTEGER,
         description: DataTypes.STRING,
-        city: DataTypes.STRING,
-        date: DataTypes.DATE,
-        price: DataTypes.DECIMAL(6,2)
+        city: DataTypes.STRING
     }, {});
     Activity.associate = function(models) {
         Activity.hasMany(models.Activity_Evaluation, {foreignKey: 'activity_id'});
