@@ -64,9 +64,13 @@ exports.update = function(req,res){ // TODO verify token
                 bio: req.body.bio
             }).then(function (up_user) {
                 res.status(200).json(user);
+            }).catch(function (err) {
+                res.status(400).json({message: "somthing went wrong"})
             })
 
-        })
+        }).catch(function (err) {
+            res.status(400).json({message: "somthing went wrong"})
+    })
 };
 
 
@@ -154,7 +158,7 @@ exports.evaluate_guide = function (req, res, next) {
         .catch((error) => res.status(400).send(error));
 };
 
-exports.book_activity = function (req, res, next) {
+exports.book_activity = function (req, res, next) { //TODO verify token
 
     return Booking
         .create({
@@ -164,4 +168,19 @@ exports.book_activity = function (req, res, next) {
         })
         .then((cc) => res.status(201).send(cc))
         .catch((error) => res.status(400).send(error));
+};
+
+exports.bookings = function (req, res, next) { //TODO verify token
+
+    User.findById(req.body.user_id) // TODO verify activity_date_id == activity_id ???
+        .then(function (user) {
+
+            user.getBookings()
+                .then(function (bookings) {
+                    res.status(201).send(bookings)
+                }).catch(function (err) {
+                    res.status(400).json({message: 'something went wrong'})
+            })
+
+        })
 };

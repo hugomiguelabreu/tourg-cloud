@@ -24,6 +24,8 @@ router.post('/evaluate_guide', user_controller.evaluate_guide);
 
 router.post('/book_activity', user_controller.book_activity);
 
+router.post('/bookings', user_controller.bookings);
+
 module.exports = router;
 
 /* ============ Comments ========== */
