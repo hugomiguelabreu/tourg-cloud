@@ -43,7 +43,7 @@ jwtOptions.secretOrKey = process.env.key;
 
 var strategy = new JwtStrategy(jwtOptions, function(jwt_payload,next){    /*  Strategy Definition */
     console.log('payload received', jwt_payload);
-    next(null, {message: 'Strategy failed'});
+    next(null, jwt_payload);
 });
 
 

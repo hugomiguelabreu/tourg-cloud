@@ -10,7 +10,7 @@ router.post('/register', user_controller.create_user);
 
 router.post('/login',user_controller.login);
 
-router.post('/:id/update', passport.authenticate('jwt', { session: false }), user_controller.update);
+router.post('/update', passport.authenticate('jwt', { session: false }), user_controller.update);
 
 router.post('/add_credit_card', user_controller.add_credit_card);
 
@@ -22,9 +22,9 @@ router.post('/evaluate_activity', user_controller.evaluate_activity);
 
 router.post('/evaluate_guide', user_controller.evaluate_guide);
 
-router.post('/:id/book_activity', passport.authenticate('jwt', { session: false }), user_controller.book_activity);
+router.post('/book_activity', passport.authenticate('jwt', { session: false }), user_controller.book_activity);
 
-router.get('/:id/bookings', passport.authenticate('jwt', { session: false }), user_controller.bookings);
+router.get('/bookings', passport.authenticate('jwt', { session: false }), user_controller.bookings);
 
 module.exports = router;
 

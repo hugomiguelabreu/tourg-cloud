@@ -56,7 +56,7 @@ exports.login = function(req,res){
 
 exports.update = function(req,res){ // TODO verify token
 
-    User.findById(req.params.id)
+    User.findById(req.user.id)
         .then(function (user) {
 
             user.update({
@@ -162,7 +162,7 @@ exports.evaluate_guide = function (req, res, next) {
 
 exports.book_activity = function (req, res, next) {
 
-    User.findByPk(req.params.id) //TODO transaction ???
+    User.findByPk(req.user.id) //TODO transaction ???
         .then(function (user) {
 
             Booking.create({
@@ -190,7 +190,7 @@ exports.book_activity = function (req, res, next) {
 
 exports.bookings = function (req, res, next) {
 
-    User.findByPk(req.params.id) // TODO verify activity_date_id == activity_id ???
+    User.findByPk(req.user.id) // TODO verify activity_date_id == activity_id ???
         .then(function (user) {
 
             user.getBookings()
