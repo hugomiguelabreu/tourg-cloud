@@ -54,17 +54,19 @@ exports.login = function(req,res){
                 });
 };
 
-exports.update = function(req,res){ // TODO verify token
+exports.update = function(req,res){
 
     User.findById(req.user.id)
         .then(function (user) {
 
             user.update({
+                email: req.body.email,
                 password: req.body.password,
                 name: req.body.name,
                 phone: req.body.phone,
                 bio: req.body.bio
             }).then(function (up_user) {
+                up_user.password = '';
                 res.status(200).json(up_user);
             }).catch(function (err) {
                 res.status(400).send(err)
