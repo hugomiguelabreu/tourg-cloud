@@ -140,7 +140,7 @@ exports.evaluate_activity = function (req, res, next) {
     return Activity_Evaluation
         .create({
             text: req.body.text,
-            user_id: req.body.user_id,
+            user_id: req.user.id,
             activity_id: req.body.activity_id,
             score: req.body.score
         })
@@ -154,7 +154,7 @@ exports.evaluate_guide = function (req, res, next) {
     return Guide_Evaluation
         .create({
             text: req.body.text,
-            user_id: req.body.user_id,
+            user_id: req.user.id,
             guide_id: req.body.guide_id,
             score: req.body.score
         })

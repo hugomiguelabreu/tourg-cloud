@@ -18,9 +18,9 @@ router.post('/send_message', user_controller.send_message);
 
 router.post('/add_complaint', user_controller.add_complaint);
 
-router.post('/evaluate_activity', user_controller.evaluate_activity);
+router.post('/evaluate_activity', passport.authenticate('jwt', { session: false }), user_controller.evaluate_activity);
 
-router.post('/evaluate_guide', user_controller.evaluate_guide);
+router.post('/evaluate_guide', passport.authenticate('jwt', { session: false }), user_controller.evaluate_guide);
 
 router.post('/book_activity', passport.authenticate('jwt', { session: false }), user_controller.book_activity);
 
