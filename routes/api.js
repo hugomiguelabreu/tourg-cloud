@@ -9,4 +9,6 @@ router.get('/test', function (req, res) { // test route, nao remover pls
 
 router.get('/activities', api_controller.activities);
 
+router.get('/activities/:id', api_controller.activity);
+
 module.exports = router;

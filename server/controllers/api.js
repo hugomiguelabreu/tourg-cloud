@@ -4,12 +4,14 @@ const Guide = require('../models').Guide;
 const User = require('../models').User;
 const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
+const Activity_Date = require('../models').Activity_Date;
+const Booking = require('../models').Booking;
 
 exports.activities = function(req, res) {
 
     return Activity
         .findAll({
-            attributes: ['title', 'description', 'city', 'lat', 'lng',
+            attributes: ['id','title', 'description', 'city', 'lat', 'lng',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
             group: ["Activity.id", "Guide.id", "Guide->User.id"],
@@ -38,6 +40,27 @@ exports.activities = function(req, res) {
             console.log(error);
             return res.status(400).send(error);
         });
+};
+
+exports.activity = function (req, res) {
+    return Activity
+        .findAll({
+            id: req.params.id,
+            where: {
+                id: req.params.id
+            },
+            include: {
+                model: Activity_Date,
+                include:{
+                    model: Booking,
+                    attributes: ['createdAt']
+                }
+            }
+        })
+        .then(function (activity) {
+            return res.status(200).send(activity[0]);
+        })
+        .catch((error) => res.status(400).send(error));
 };
 
 exports.activities_city = function (req, res) {
