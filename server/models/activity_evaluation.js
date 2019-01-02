@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     });
     Activity_Evaluation.associate = function(models) {
-        // associations can be defined here
+        Activity_Evaluation.belongsTo(models.Activity, {foreignKey: 'activity_id', target_key: 'id'})
     };
     return Activity_Evaluation;
 };

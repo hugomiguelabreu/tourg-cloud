@@ -2,6 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
     const Activity = sequelize.define('Activity', {
         guide_id: DataTypes.INTEGER, // FK
+        title: DataTypes.TEXT,
         description: DataTypes.STRING,
         city: DataTypes.STRING,
         lat: DataTypes.FLOAT,
