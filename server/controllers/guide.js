@@ -48,14 +48,14 @@ exports.create_guide = function(req, res) {
                 swift: req.body.swift,
                 user_id: user.id
             }, {transaction: t});
-        });
+        })
 
     }).then(function(guide) {
         console.log("Transaction Succeed");
         res.status(200).json({ user: c_user, guide: guide});
     }).catch(function(err){
         console.log("Transaction Error");
-        res.status(400).send(err);
+        res.status(400).json({message: 'email already in use'}); // TODO check different errors
     });
 
 };
