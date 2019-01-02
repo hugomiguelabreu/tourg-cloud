@@ -61,6 +61,7 @@ exports.create_guide = function(req, res) {
 };
 
 
+//TODO findAll guide include user -> joao falar com renato
 /* guide log-in  - Em desenvolvimento */
 exports.login = function(req,res){
     User.findAll({ where:{
@@ -76,7 +77,11 @@ exports.login = function(req,res){
                                 var payload = {id:user[0].id};
                                 var token = jwt.sign(payload,process.env.key);
 
-                                Guide.findAll({where:{user_id:user[0].id}})
+                                Guide.findAll({ where: {
+                                                           user_id:user[0].id
+                                                        },
+                                                            include: User
+                                                      })
                                     .then(function(guide){
                                         guide[0].password='';
                                         res.json({ token: token, user: guide[0]});
