@@ -13,20 +13,7 @@ var sequelize = models.sequelize;
 
 /* -------------------------- Código em desenvolvimento -------------------- */
 /* guide sign-up  - Em desenvolvimento */
- /* Notes: */
- /* Está a fazer RollBack no guide - mas não devia */
- /* Input:
 
-    POST http://localhost:3000/api/guide/register
-
-    email
-    password
-    name
-    phone
-    bio
-    account_number
-    swift
-*/
 exports.create_guide = function(req, res) {
 
     let c_user = '';
@@ -57,16 +44,13 @@ exports.create_guide = function(req, res) {
         console.log("Transaction Error");
         res.status(400).json({message: 'email already in use'}); // TODO check different errors
     });
-
 };
 
 
 //TODO findAll guide include user -> joao falar com renato
-/* guide log-in  - Em desenvolvimento */
 exports.login = function(req,res){
-    User.findAll({ where:{
-                            email: req.body.email ,
-                            password: req.body.password
+    User.findAll({ where:{email: req.body.email ,
+                          password: req.body.password
                          }
                 })
                 .then(function(user){
