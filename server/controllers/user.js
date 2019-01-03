@@ -6,6 +6,7 @@ const Message = require('../models').Message;
 const Complaint = require('../models').Complaint;
 const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
+const Guide = require('../models').Guide;
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
 const Booking = require('../models').Booking;
@@ -199,6 +200,12 @@ exports.bookings = function (req, res, next) {
         },
         include:[{
             model: Activity,
+            include: {
+                model: Guide,
+                include: {
+                    model: User
+                }
+            }
         },{
             model: Activity_Date,
         }]
