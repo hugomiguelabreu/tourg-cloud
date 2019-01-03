@@ -1,6 +1,7 @@
 const User = require('../models').User;
 const Credit_Card = require('../models').Credit_Card;
 const Activity = require('../models').Activity;
+const Activity_Date = require('../models').Activity_Date;
 const Message = require('../models').Message;
 const Complaint = require('../models').Complaint;
 const Activity_Evaluation = require('../models').Activity_Evaluation;
@@ -191,18 +192,34 @@ exports.book_activity = function (req, res, next) {
 };
 
 exports.bookings = function (req, res, next) {
+    
+    Booking.findAll({
+        where:{
+            user_id: req.user.id
+        },
+        include:[{
+            model: Activity,
+        },{
+            model: Activity_Date,
+        }]
+    }).then(function (bookings) {
+        res.status(201).send(bookings)
+    }).catch(function (err) {
+        res.status(400).send('error')
+    })
+    
 
-    User.findByPk(req.user.id) // TODO verify activity_date_id == activity_id ???
-        .then(function (user) {
-
-            user.getBookings()
-                .then(function (bookings) {
-                    res.status(201).send(bookings)
-                }).catch(function (err) {
-                    res.status(400).send(err)
-            })
-
-        }).catch(function (err) {
-            res.status(400).send(err)
-        })
+    // User.findByPk(req.user.id) // TODO verify activity_date_id == activity_id ???
+    //     .then(function (user) {
+    //
+    //         user.getBookings()
+    //             .then(function (bookings) {
+    //                 res.status(201).send(bookings)
+    //             }).catch(function (err) {
+    //                 res.status(400).send(err)
+    //         })
+    //
+    //     }).catch(function (err) {
+    //         res.status(400).send(err)
+    //     })
 };
