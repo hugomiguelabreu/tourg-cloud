@@ -5,6 +5,7 @@ const Message = require('../models').Message;
 const Activity_Date = require('../models').Activity_Date;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
 const models = require('../models');
+const Booking = require('../models').Booking;
 
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
@@ -103,6 +104,7 @@ exports.create_activity = function(req, res, next) {
         .create({
             guide_id: req.body.guide_id,
             description: req.body.description,
+            category_id: req.body.category_id,
             city: req.body.city,
             lat: req.body.lat,
             lng: req.body.lng,
@@ -129,4 +131,28 @@ exports.send_message = function (req, res, next) { // true user -> guide | false
         })
         .then((cc) => res.status(201).send(cc))
         .catch((error) => res.status(400).send(error));
+};
+
+
+exports.get_bookings = function(req,res) {
+    Guide.findAll({
+        where:{
+            user_id: req.user.id
+        },
+        include:{
+            model: Activity,
+            include: {
+                model: Booking,
+                include: {
+                    model: User,
+                    attributes: ['email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
+                }
+            }
+        }
+    }).then(function(bookings){
+        res.status(201).send(bookings);
+    }).catch(function(err){
+        console.log(err)
+        res.status(400).send(err);
+    })
 };
