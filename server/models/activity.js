@@ -6,12 +6,15 @@ module.exports = (sequelize, DataTypes) => {
         description: DataTypes.STRING,
         city: DataTypes.STRING,
         lat: DataTypes.FLOAT,
-        lng: DataTypes.FLOAT
+        lng: DataTypes.FLOAT,
+        category_id: DataTypes.INTEGER
     }, {});
     Activity.associate = function(models) {
         Activity.hasMany(models.Activity_Evaluation, {foreignKey: 'activity_id'});
         Activity.hasMany(models.Activity_Date, {foreignKey: 'activity_id'});
-        Activity.belongsTo(models.Guide, {foreignKey: 'guide_id'})
+        Activity.belongsTo(models.Guide, {foreignKey: 'guide_id'});
+        Activity.belongsTo(models.Category, {foreignKey: 'category_id'});
+        Activity.hasMany(models.Booking, {foreignKey: 'activity_id', sourceKey: 'id'})
     };
     return Activity;
 };
