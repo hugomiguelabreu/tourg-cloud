@@ -156,3 +156,4 @@ exports.get_bookings = function(req,res) {
         res.status(400).send(err);
     })
 };
+
