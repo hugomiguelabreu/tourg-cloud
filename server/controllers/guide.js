@@ -3,6 +3,7 @@ const User = require('../models').User;
 const Activity = require('../models').Activity;
 const Message = require('../models').Message;
 const Activity_Date = require('../models').Activity_Date;
+const Guide_Evaluation = require('../models').Guide_Evaluation;
 const models = require('../models');
 
 var passport = require("passport");
@@ -60,17 +61,25 @@ exports.login = function(req,res){
                         else if(user[0].password === req.body.password) {
                                 var payload = {id:user[0].id};
                                 var token = jwt.sign(payload,process.env.key);
-
                                 Guide.findAll({ where: {
                                                            user_id:user[0].id
                                                         },
-                                                            include: User
+                                                        attributes: ['id', 'account_number', 'swift',
+                                                            [sequelize.fn('SUM', sequelize.col('Guide_Evaluations.score')), 'total_guide_score'],
+                                                            [sequelize.fn('COUNT', sequelize.col('Guide_Evaluations.score')), 'n_guide_score']],
+                                                        group: ["Guide.id", "User.id"],
+                                                        include: [{
+                                                            model: User,
+                                                        },{
+                                                            model: Guide_Evaluation,
+                                                            attributes: []
+                                                        }]
                                                       })
                                     .then(function(guide){
                                         guide[0].password='';
                                         res.json({ token: token, user: guide[0]});
-                                    }).catch(function(guide){
-                                        res.status(400).json({message:"Bad Request"});
+                                    }).catch(function(error){
+                                        res.status(400).send(error);
                                     });
 
                              }
@@ -79,7 +88,7 @@ exports.login = function(req,res){
                             }
                 })
                 .catch(function(err){
-                        res.status(400).send(err);
+                    res.status(400).send(err);
                 });
 };
 
