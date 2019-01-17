@@ -7,7 +7,7 @@ router.get('/test', function (req, res) { // test route, nao remover pls
     res.send('ping')
 });
 
-// router.post('/add_category', api_controller.add_category);
+router.post('/add_category', api_controller.add_category);
 
 router.get('/activities', api_controller.activities);
 

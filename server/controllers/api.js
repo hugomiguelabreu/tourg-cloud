@@ -76,12 +76,12 @@ exports.activities_city = function (req, res) {
         .catch((error) => res.status(400).send(error));
 };
 
-// exports.add_category = function (req, res) {
-//
-//     return Category
-//         .create({
-//             name: req.body.name
-//         })
-//         .then((cc) => res.status(200).send(cc))
-//         .catch((error) => res.status(400).send(error));
-// };
+exports.add_category = function (req, res) {
+
+    return Category
+        .create({
+            name: req.body.name
+        })
+        .then((cc) => res.status(200).send(cc))
+        .catch((error) => res.status(400).send(error));
+};
