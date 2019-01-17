@@ -3,6 +3,7 @@ const User = require('../models').User;
 const Activity = require('../models').Activity;
 const Message = require('../models').Message;
 const Activity_Date = require('../models').Activity_Date;
+const Booking = require('../models').Booking;
 const models = require('../models');
 
 var passport = require("passport");
@@ -121,3 +122,26 @@ exports.send_message = function (req, res, next) { // true user -> guide | false
         .then((cc) => res.status(201).send(cc))
         .catch((error) => res.status(400).send(error));
 };
+
+
+exports.get_bookings = function(req,res) {
+    Guide.findAll({
+            where:{
+              user_id: req.user.id
+            },
+            include:{
+                  model: Activity,
+                  include: {
+                      model: Booking,
+                      include: {
+                          model: User
+                      }
+                    }
+              }
+            }
+          }).then(function(bookings){
+                  res.status(201).send(bookings);
+          }).catch(function(err){
+                  res.status(400).send('error');
+          });
+}
