@@ -202,6 +202,7 @@ exports.bookings = function (req, res, next) {
             model: Activity,
             include: {
                 model: Guide,
+                attributes: ['id','account_number','swift','createdAt'],
                 include: {
                     model: User
                 }
