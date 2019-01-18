@@ -4,6 +4,13 @@ module.exports = (sequelize, DataTypes) => {
             user_id: DataTypes.INTEGER,
             activity_id: DataTypes.INTEGER,
             activity_date_id: DataTypes.INTEGER,
+            accepted: DataTypes.BOOLEAN,
+            guide_lat: DataTypes.FLOAT,
+            guide_lng: DataTypes.FLOAT,
+            user_lat: DataTypes.FLOAT,
+            user_lng: DataTypes.FLOAT,
+            guide_review: DataTypes.BOOLEAN,
+            activity_review: DataTypes.BOOLEAN
         },
         {
             timestamps: true,
