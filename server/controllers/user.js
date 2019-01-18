@@ -1,3 +1,4 @@
+const sequelize = require("sequelize");
 const User = require('../models').User;
 const Credit_Card = require('../models').Credit_Card;
 const Activity = require('../models').Activity;
@@ -193,27 +194,34 @@ exports.book_activity = function (req, res, next) {
 };
 
 exports.bookings = function (req, res, next) {
-    
+
     Booking.findAll({
         where:{
             user_id: req.user.id
         },
+        group: ['Booking.id', "Activity.id", "Activity_Date.id", "Activity->Guide.id", "Activity->Guide->User.id"],
         include:[{
             model: Activity,
-            include: {
+            attributes: ['id','title', 'description', 'city', 'lat', 'lng',
+                [sequelize.fn('SUM', sequelize.col('Activity->Activity_Evaluations.score')), 'total_activity_score'],
+                [sequelize.fn('COUNT', sequelize.col('Activity->Activity_Evaluations.score')), 'n_activity_score']],
+            include: [{
                 model: Guide,
                 attributes: ['id','account_number','swift','createdAt'],
                 include: {
                     model: User
                 }
-            }
+            },{
+                model: Activity_Evaluation,
+                attributes: []
+            }]
         },{
             model: Activity_Date,
         }]
     }).then(function (bookings) {
         res.status(201).send(bookings)
     }).catch(function (err) {
-        res.status(400).send('error')
+        res.status(400).send(err)
     })
     
 
