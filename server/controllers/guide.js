@@ -205,9 +205,12 @@ exports.get_bookings = function(req,res) {
                     model: User,
                     attributes: ['email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
                 },
-                    {
-                        model: Activity
-                    }]
+                {
+                    model: Activity
+                },
+                {
+                    model: Activity_Date
+                }]
             }
         }
     }).then(function(bookings){

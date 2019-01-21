@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
             timestamps: false
         });
     Activity_Date.associate = function(models) {
-        Activity_Date.hasOne(models.Booking, {foreignKey: 'activity_date_id'});
+        Activity_Date.hasMany(models.Booking, {foreignKey: 'activity_date_id', sourceKey: 'id'});
+        Activity_Date.belongsTo(models.Activity, {foreignKey: 'activity_id'})
     };
     return Activity_Date;
 };
