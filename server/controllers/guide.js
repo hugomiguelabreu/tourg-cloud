@@ -202,3 +202,20 @@ exports.get_booking = function(req,res) {
     })
 };
 
+exports.accept_booking = function (req, res) {
+
+    Booking.findByPk(req.params.id).then(function (booking) {
+        booking.update({
+            accepted: req.body.state
+        }).then(function(book){
+            res.status(200).send(book);
+        }).catch(function(err){
+            console.log(err)
+            res.status(400).send(err);
+        })
+    }).catch(function(err){
+        res.status(400).send(err);
+    })
+
+};
+

@@ -16,5 +16,7 @@ router.get('/bookings',passport.authenticate('jwt', { session: false }),guide_co
 /*Get specific booking*/
 router.get('/booking/:id',passport.authenticate('jwt', { session: false }),guide_controller.get_booking);
 
+/* set accepted true or false*/
+router.post('/booking/:id/accept',passport.authenticate('jwt', { session: false }),guide_controller.accept_booking);
 
 module.exports = router;
