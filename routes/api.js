@@ -13,6 +13,8 @@ router.get('/activities', api_controller.activities);
 
 router.get('/activities/:id', api_controller.activity);
 
+router.get('/activities_dates/:id', api_controller.activity_dates);
+
 // router.get('/add_cities', api_controller.add_city);
 
 module.exports = router;

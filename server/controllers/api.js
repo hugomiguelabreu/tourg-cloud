@@ -118,3 +118,18 @@ exports.add_city = function (req, res) {
     }
     res.status(200).send('cities added');
 };
+
+exports.activity_dates = function (req, res) {
+
+    return Activity
+        .findByPk(req.params.id, {
+            include: Activity_Date
+        })
+        .then(activities => {
+            res.status(200).send(activities)
+        })
+        .catch(error => {
+            console.log(error);
+            return res.status(400).send(error);
+        });
+};
