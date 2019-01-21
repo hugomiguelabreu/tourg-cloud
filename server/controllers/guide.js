@@ -100,24 +100,82 @@ exports.login = function(req,res){
 
 exports.create_activity = function(req, res, next) {
 
-    return Activity
-        .create({
-            guide_id: req.body.guide_id,
-            description: req.body.description,
-            category_id: req.body.category_id,
-            city: req.body.city,
-            lat: req.body.lat,
-            lng: req.body.lng,
-            Activity_Dates: {
-                price: req.body.price,
-                timestamp: req.body.timestamp
-            }
-        },
-        {
-            include: Activity_Date
-        })
-        .then((cc) => res.status(201).send(cc))
-        .catch((error) => res.status(400).send(error));
+    return sequelize.transaction(function (t) {
+
+        activity = Activity
+            .create({
+                guide_id: req.body.guide_id,
+                description: req.body.description,
+                category_id: req.body.category_id,
+                city: req.body.city,
+                lat: req.body.lat,
+                lng: req.body.lng,
+            }, {transaction: t});
+
+
+
+        let dates = req.body.dates.split(',');
+        console.log(dates)
+        let i = 0;
+        let promisses = [];
+
+        for(i=0; i<dates.length; i++){
+            console.log(dates[i]);
+            p = Activity_Date
+                .create({
+                    price: req.body.price,
+                    timestamp: dates[i],
+                    activity_id: activity.id
+                }, {transaction: t});
+
+            promisses.push(p)
+
+        }
+        // chain all your queries here. make sure you return them.
+        return Promisse.all(promisses).then(function (act_dates) {
+
+            let i = 0;
+            console.log(act_dates)
+
+            // activity = Activity
+            //     .create({
+            //         guide_id: req.body.guide_id,
+            //         description: req.body.description,
+            //         category_id: req.body.category_id,
+            //         city: req.body.city,
+            //         lat: req.body.lat,
+            //         lng: req.body.lng,
+            //     }, {transaction: t});
+
+        });
+
+    }).then(function (result) {
+        // Transaction has been committed
+        // result is whatever the result of the promise chain returned to the transaction callback
+    }).catch(function (err) {
+        // Transaction has been rolled back
+        // err is whatever rejected the promise chain returned to the transaction callback
+    });
+
+
+    // return Activity
+    //     .create({
+    //         guide_id: req.body.guide_id,
+    //         description: req.body.description,
+    //         category_id: req.body.category_id,
+    //         city: req.body.city,
+    //         lat: req.body.lat,
+    //         lng: req.body.lng,
+    //         Activity_Dates: {
+    //             price: req.body.price,
+    //             timestamp: req.body.timestamp
+    //         }
+    //     },
+    //     {
+    //         include: Activity_Date
+    //     })
+    //     .then((cc) => res.status(201).send(cc))
+    //     .catch((error) => res.status(400).send(error));
 };
 
 exports.send_message = function (req, res, next) { // true user -> guide | false guide -> user
@@ -143,10 +201,13 @@ exports.get_bookings = function(req,res) {
             model: Activity,
             include: {
                 model: Booking,
-                include: {
+                include: [{
                     model: User,
                     attributes: ['email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
-                }
+                },
+                    {
+                        model: Activity
+                    }]
             }
         }
     }).then(function(bookings){
