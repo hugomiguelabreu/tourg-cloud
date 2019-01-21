@@ -10,8 +10,11 @@ router.post('/send_message', guide_controller.send_message);
 router.post('/register', guide_controller.create_guide);
 router.post('/login',guide_controller.login);
 
-/*Get guider bookings*/
+/*Get guide bookings*/
 router.get('/bookings',passport.authenticate('jwt', { session: false }),guide_controller.get_bookings);
+
+/*Get specific booking*/
+router.get('/booking/:id',passport.authenticate('jwt', { session: false }),guide_controller.get_booking);
 
 
 module.exports = router;

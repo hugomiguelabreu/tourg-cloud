@@ -174,7 +174,28 @@ exports.get_bookings = function(req,res) {
             }
         }
     }).then(function(bookings){
-        res.status(201).send(bookings);
+        res.status(200).send(bookings[0]);
+    }).catch(function(err){
+        console.log(err)
+        res.status(400).send(err);
+    })
+};
+
+exports.get_booking = function(req,res) {
+
+    Booking.findByPk(req.params.id, {
+
+        include: [{
+            model: User
+        },
+        {
+            model: Activity_Date
+        },
+        {
+            model: Activity
+        }]
+    }).then(function(bookings){
+        res.status(200).send(bookings);
     }).catch(function(err){
         console.log(err)
         res.status(400).send(err);
