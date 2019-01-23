@@ -110,19 +110,19 @@ exports.add_credit_card = function(req, res) {
     //     .then((cc) => res.status(201).send(cc))
     //     .catch((error) => res.status(400).send(error));
 };
-
-exports.send_message = function (req, res, next) { // true user -> guide | false guide -> user
-
-    return Message
-        .create({
-            msg: req.body.msg,
-            way: true,
-            user_id: req.body.user_id,
-            guide_id: req.body.guide_id
-        })
-        .then((cc) => res.status(201).send(cc))
-        .catch((error) => res.status(400).send(error));
-};
+//
+// exports.send_message = function (req, res, next) { // true user -> guide | false guide -> user
+//
+//     return Message
+//         .create({
+//             msg: req.body.msg,
+//             way: true,
+//             user_id: req.body.user_id,
+//             guide_id: req.body.guide_id
+//         })
+//         .then((cc) => res.status(201).send(cc))
+//         .catch((error) => res.status(400).send(error));
+// };
 
 exports.add_complaint = function (req, res, next) { // true user -> guide | false guide -> user
 
@@ -130,7 +130,7 @@ exports.add_complaint = function (req, res, next) { // true user -> guide | fals
         .create({
             text: req.body.text,
             way: true,
-            user_id: req.body.user_id,
+            user_id: req.user.user_id,
             guide_id: req.body.guide_id
         })
         .then((cc) => res.status(201).send(cc))

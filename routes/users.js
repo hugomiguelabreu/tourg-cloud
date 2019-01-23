@@ -14,9 +14,9 @@ router.post('/update', passport.authenticate('jwt', { session: false }), user_co
 
 router.post('/add_credit_card', user_controller.add_credit_card);
 
-router.post('/send_message', user_controller.send_message);
+// router.post('/send_message', user_controller.send_message);
 
-router.post('/add_complaint', user_controller.add_complaint);
+router.post('/add_complaint', passport.authenticate('jwt', { session: false }), user_controller.add_complaint);
 
 router.post('/evaluate_activity', passport.authenticate('jwt', { session: false }), user_controller.evaluate_activity);
 
