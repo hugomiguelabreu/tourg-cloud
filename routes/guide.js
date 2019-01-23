@@ -20,4 +20,7 @@ router.get('/booking/:id',passport.authenticate('jwt', { session: false }),guide
 /* set accepted true or false*/
 router.post('/booking/:id/accept',passport.authenticate('jwt', { session: false }),guide_controller.accept_booking);
 
+router.post('/booking/:id/gps',passport.authenticate('jwt', { session: false }),guide_controller.gps);
+
+
 module.exports = router;
