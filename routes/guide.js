@@ -7,6 +7,8 @@ router.post('/send_message', guide_controller.send_message);
 /*Login and Register*/
 router.post('/register', guide_controller.create_guide);
 router.post('/login',guide_controller.login);
+/* Update guide info */
+router.put('/update',passport.authenticate('jwt',{ session: false}), guide_controller.update_data);
 
 /* create activity */
 router.post('/create_activity',passport.authenticate('jwt', { session: false }), guide_controller.create_activity);
@@ -21,6 +23,8 @@ router.get('/booking/:id',passport.authenticate('jwt', { session: false }),guide
 router.post('/booking/:id/accept',passport.authenticate('jwt', { session: false }),guide_controller.accept_booking);
 
 router.post('/booking/:id/gps',passport.authenticate('jwt', { session: false }),guide_controller.gps);
+
+
 
 
 module.exports = router;
