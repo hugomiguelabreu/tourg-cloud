@@ -1,4 +1,3 @@
-const sequelize = require("sequelize");
 const User = require('../models').User;
 const Credit_Card = require('../models').Credit_Card;
 const Activity = require('../models').Activity;
@@ -8,9 +7,14 @@ const Complaint = require('../models').Complaint;
 const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
 const Guide = require('../models').Guide;
+const Booking = require('../models').Booking;
+
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
-const Booking = require('../models').Booking;
+
+const models = require('../models');
+const sequelize = require("sequelize");
+const Sequelize = models.sequelize;
 
 
 /* user sign up */
@@ -154,15 +158,33 @@ exports.evaluate_activity = function (req, res, next) {
 //TODO check if user went to the activity with this guide
 exports.evaluate_guide = function (req, res, next) {
 
-    return Guide_Evaluation
-        .create({
-            text: req.body.text,
-            user_id: req.user.id,
-            guide_id: req.body.guide_id,
-            score: req.body.score
+    return Sequelize.transaction(function (t) {
+
+        return Booking
+            .findAll({
+                where:{
+                    id: req.body.booking_id,
+                    guide_evaluation_id: null
+                }
+            }, {transaction: t})
+                .then(function (b) {
+
+                    return Guide_Evaluation
+                        .create({
+                            text: req.body.text,
+                            user_id: req.user.id,
+                            guide_id: req.body.guide_id,
+                            score: req.body.score
+                        }, {transaction: t}).then(function (guide_eval) {
+
+                            return b[0].setGuide_Evaluation(guide_eval, {transaction: t})
+                    })
         })
-        .then((cc) => res.status(201).send(cc))
-        .catch((error) => res.status(400).send(error));
+    }).then(function (result) {
+        res.status(200).send(result)
+    }).catch(function (err) {
+        res.status(400).json({message: 'user already evaluated guide'})
+    });
 };
 
 exports.book_activity = function (req, res, next) {
