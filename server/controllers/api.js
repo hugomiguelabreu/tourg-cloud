@@ -30,11 +30,11 @@ exports.activities = function(req, res) {
 
                 },{
                     model: Guide_Evaluation,
-                    attributes: ['id']
+                    attributes: []
                 }]
             },{
                 model: Activity_Evaluation,
-                attributes: ['id']
+                attributes: []
             }]
         })
         .then(function (activities) {
@@ -81,11 +81,11 @@ exports.activity = function (req, res) {
 
                 },{
                     model: Guide_Evaluation,
-                    attributes: ['id']
+                    attributes: []
                 }]
             },{
                 model: Activity_Evaluation,
-                attributes: ['id']
+                attributes: []
             }]
         })
         .then(function (activities) {
@@ -129,7 +129,7 @@ exports.activity_dates = function (req, res) {
                     [sequelize.fn('COUNT', sequelize.col('Activity_Dates->Bookings.id')), 'bookings']],
                 include:{
                     model: Booking,
-                    attributes: ['id']
+                    attributes: []
                 }
             }
         })
@@ -165,11 +165,11 @@ exports.search_city = function (req, res) {
 
                 },{
                     model: Guide_Evaluation,
-                    attributes: ['id']
+                    attributes: []
                 }]
             },{
                 model: Activity_Evaluation,
-                attributes: ['id']
+                attributes: []
             }]
         })
         .then(function (activities) {
@@ -192,7 +192,7 @@ exports.search_dates = function (req, res) {
             attributes: ['id','title', 'description', 'city', 'lat', 'lng',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
-            group: ['Activity_Evaluations.id',"Activity.id", "Guide.id", "Guide->User.id", "Guide->Guide_Evaluations.id"],
+            group: ["Activity.id", "Guide.id", "Guide->User.id", "Guide->Guide_Evaluations.id", 'Activity_Evaluations.id', "Activity_Dates.id"],
             include: [{
                 model: Guide,
                 attributes: ['id', 'account_number', 'swift',
@@ -204,13 +204,18 @@ exports.search_dates = function (req, res) {
 
                 },{
                     model: Guide_Evaluation,
-                    attributes: ['id']
+                    attributes: []
                 }]
             },{
                 model: Activity_Evaluation,
-                attributes: ['id']
+                attributes: []
             },{
-                model: Activity_Date
+                model: Activity_Date,
+                where: {
+                    timestamp: {
+                        $between: [req.params.start_date, req.params.end_date]
+                    }
+                }
             }]
         })
         .then(function (activities) {
