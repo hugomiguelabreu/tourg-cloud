@@ -117,21 +117,43 @@ exports.add_complaint = function (req, res, next) { // true user -> guide | fals
         .catch((error) => res.status(400).send(error));
 };
 
-//TODO check if user went to the activity
+
 exports.evaluate_activity = function (req, res, next) {
 
-    return Activity_Evaluation
-        .create({
-            text: req.body.text,
-            user_id: req.user.id,
-            activity_id: req.body.activity_id,
-            score: req.body.score
-        })
-        .then((cc) => res.status(201).send(cc))
-        .catch((error) => res.status(400).send(error));
+    return Sequelize.transaction(function (t) {
+
+        return Booking
+            .findAll({
+                where:{
+                    id: req.body.booking_id,
+                    //activity_id: req.body.activity_id,
+                    activity_evaluation_id: null
+                }
+            }, {transaction: t})
+            .then(function (b) {
+
+                if(!b[0])
+                    throw new Error("user already evaluated activity");
+                    // TODO check for more errors???
+
+                return Activity_Evaluation
+                    .create({
+                        text: req.body.text,
+                        user_id: req.user.id,
+                        activity_id: req.body.activity_id,
+                        score: req.body.score
+                    }, {transaction: t}).then(function (activity_eval) {
+
+                        return b[0].setActivity_Evaluation(activity_eval, {transaction: t})
+                    })
+            })
+    }).then(function (result) {
+        res.status(200).send(result)
+    }).catch(function (err) {
+        res.status(400).json({message: err.message })
+    });
 };
 
-//TODO check if user went to the activity with this guide
 exports.evaluate_guide = function (req, res, next) {
 
     return Sequelize.transaction(function (t) {
@@ -144,6 +166,10 @@ exports.evaluate_guide = function (req, res, next) {
                 }
             }, {transaction: t})
                 .then(function (b) {
+
+                    if(!b[0])
+                        throw new Error("user already evaluated guide");
+                    // TODO check for more errors???
 
                     return Guide_Evaluation
                         .create({
@@ -159,7 +185,7 @@ exports.evaluate_guide = function (req, res, next) {
     }).then(function (result) {
         res.status(200).send(result)
     }).catch(function (err) {
-        res.status(400).json({message: 'user already evaluated guide'})
+        res.status(400).json({message: err.message })
     });
 };
 
