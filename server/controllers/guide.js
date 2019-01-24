@@ -32,7 +32,7 @@ exports.create_guide = function(req, res) {
         }, {transaction: t}).then(function(user) {
 
             c_user = user;
-
+            console.log("Criou o user!");
             return Guide.create({
                 account_number: req.body.account_number,
                 swift: req.body.swift,
@@ -96,7 +96,45 @@ exports.login = function(req,res){
 
 /* --------------------------------------------------------------------------- */
 
+exports.update_data = function (req,res,next) {
 
+
+     return sequelize.transaction(function (t) {
+            
+        return User.update({
+            email: req.body.email,
+            password: req.body.password,
+            name: req.body.name,
+            phone: req.body.phone,
+            bio: req.body.bio
+            },
+            { where:{
+
+                    id: req.user.id
+                    }
+            ,transaction: t}).then(function(user){
+  
+            return Guide.update({
+                account_number: req.body.account_number,
+                swift: req.body.swift
+                },
+                { where: {
+                        user_id: req.user.id
+                         }
+                ,transaction: t});
+            })
+
+    }).then(function(guide) {
+        console.log("Transaction Succeed");
+        res.status(200).json({message: "Update Succeed"});
+    }).catch(function(err){
+        console.log("Transaction error: " + err);
+        res.status(400).json({message: 'Update Error'}); 
+    });
+
+
+
+}
 
 
 exports.create_activity = function(req, res, next) {
@@ -108,8 +146,10 @@ exports.create_activity = function(req, res, next) {
             description: req.body.description,
             category_id: req.body.category_id,
             city: req.body.city,
+            n_people: req.body.n_people,
+            duration: req.body.duration,
             lat: req.body.lat,
-            lng: req.body.lng,
+            lng: req.body.lng
         }, {transaction: t}).then(function (activity) {
 
             // console.log(Object.keys(activity.__proto__));

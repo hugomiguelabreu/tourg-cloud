@@ -6,6 +6,6 @@ router.post('/create_guide', admin_controller.create_guide);
 
 router.post('/add_cities', admin_controller.add_city);
 
-//router.post('/add_category', api_controller.add_category);
+router.post('/add_category', admin_controller.add_category);
 
 module.exports = router;
