@@ -126,6 +126,7 @@ exports.evaluate_activity = function (req, res, next) {
             .findAll({
                 where:{
                     id: req.body.booking_id,
+                    user_id: req.user.id,
                     //activity_id: req.body.activity_id,
                     activity_evaluation_id: null
                 }
@@ -162,6 +163,7 @@ exports.evaluate_guide = function (req, res, next) {
             .findAll({
                 where:{
                     id: req.body.booking_id,
+                    user_id: req.user.id,
                     guide_evaluation_id: null
                 }
             }, {transaction: t})
