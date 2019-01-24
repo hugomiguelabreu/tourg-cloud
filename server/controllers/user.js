@@ -1,4 +1,4 @@
-const sequelize = require("sequelize");
+const models = require('../models');
 const User = require('../models').User;
 const Credit_Card = require('../models').Credit_Card;
 const Activity = require('../models').Activity;
@@ -8,9 +8,13 @@ const Complaint = require('../models').Complaint;
 const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
 const Guide = require('../models').Guide;
+const Booking = require('../models').Booking;
+
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
-const Booking = require('../models').Booking;
+
+const sequelize = require("sequelize");
+const Sequelize = models.sequelize;
 
 
 /* user sign up */
@@ -97,32 +101,8 @@ exports.add_credit_card = function(req, res) {
 
     })
         .catch((error) => res.status(400).send(error));
-
-
-
-
-    // return Credit_Card
-    //     .create({
-    //         number: req.body.number,
-    //         expiry_date: req.body.expiry_date,
-    //         user_id: req.body.user_id
-    //     })
-    //     .then((cc) => res.status(201).send(cc))
-    //     .catch((error) => res.status(400).send(error));
 };
-//
-// exports.send_message = function (req, res, next) { // true user -> guide | false guide -> user
-//
-//     return Message
-//         .create({
-//             msg: req.body.msg,
-//             way: true,
-//             user_id: req.body.user_id,
-//             guide_id: req.body.guide_id
-//         })
-//         .then((cc) => res.status(201).send(cc))
-//         .catch((error) => res.status(400).send(error));
-// };
+
 
 exports.add_complaint = function (req, res, next) { // true user -> guide | false guide -> user
 
@@ -137,32 +117,78 @@ exports.add_complaint = function (req, res, next) { // true user -> guide | fals
         .catch((error) => res.status(400).send(error));
 };
 
-//TODO check if user went to the activity
+
 exports.evaluate_activity = function (req, res, next) {
 
-    return Activity_Evaluation
-        .create({
-            text: req.body.text,
-            user_id: req.user.id,
-            activity_id: req.body.activity_id,
-            score: req.body.score
-        })
-        .then((cc) => res.status(201).send(cc))
-        .catch((error) => res.status(400).send(error));
+    return Sequelize.transaction(function (t) {
+
+        return Booking
+            .findAll({
+                where:{
+                    id: req.body.booking_id,
+                    user_id: req.user.id,
+                    //activity_id: req.body.activity_id,
+                    activity_evaluation_id: null
+                }
+            }, {transaction: t})
+            .then(function (b) {
+
+                if(!b[0])
+                    throw new Error("user already evaluated activity");
+                    // TODO check for more errors???
+
+                return Activity_Evaluation
+                    .create({
+                        text: req.body.text,
+                        user_id: req.user.id,
+                        activity_id: req.body.activity_id,
+                        score: req.body.score
+                    }, {transaction: t}).then(function (activity_eval) {
+
+                        return b[0].setActivity_Evaluation(activity_eval, {transaction: t})
+                    })
+            })
+    }).then(function (result) {
+        res.status(200).send(result)
+    }).catch(function (err) {
+        res.status(400).json({message: err.message })
+    });
 };
 
-//TODO check if user went to the activity with this guide
 exports.evaluate_guide = function (req, res, next) {
 
-    return Guide_Evaluation
-        .create({
-            text: req.body.text,
-            user_id: req.user.id,
-            guide_id: req.body.guide_id,
-            score: req.body.score
+    return Sequelize.transaction(function (t) {
+
+        return Booking
+            .findAll({
+                where:{
+                    id: req.body.booking_id,
+                    user_id: req.user.id,
+                    guide_evaluation_id: null
+                }
+            }, {transaction: t})
+                .then(function (b) {
+
+                    if(!b[0])
+                        throw new Error("user already evaluated guide");
+                    // TODO check for more errors???
+
+                    return Guide_Evaluation
+                        .create({
+                            text: req.body.text,
+                            user_id: req.user.id,
+                            guide_id: req.body.guide_id,
+                            score: req.body.score
+                        }, {transaction: t}).then(function (guide_eval) {
+
+                            return b[0].setGuide_Evaluation(guide_eval, {transaction: t})
+                    })
         })
-        .then((cc) => res.status(201).send(cc))
-        .catch((error) => res.status(400).send(error));
+    }).then(function (result) {
+        res.status(200).send(result)
+    }).catch(function (err) {
+        res.status(400).json({message: err.message })
+    });
 };
 
 exports.book_activity = function (req, res, next) {
@@ -223,19 +249,4 @@ exports.bookings = function (req, res, next) {
     }).catch(function (err) {
         res.status(400).send(err)
     })
-    
-
-    // User.findByPk(req.user.id) // TODO verify activity_date_id == activity_id ???
-    //     .then(function (user) {
-    //
-    //         user.getBookings()
-    //             .then(function (bookings) {
-    //                 res.status(201).send(bookings)
-    //             }).catch(function (err) {
-    //                 res.status(400).send(err)
-    //         })
-    //
-    //     }).catch(function (err) {
-    //         res.status(400).send(err)
-    //     })
 };

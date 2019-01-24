@@ -10,7 +10,9 @@ module.exports = (sequelize, DataTypes) => {
             user_lat: DataTypes.FLOAT,
             user_lng: DataTypes.FLOAT,
             guide_review: DataTypes.BOOLEAN,
-            activity_review: DataTypes.BOOLEAN
+            activity_review: DataTypes.BOOLEAN,
+            guide_evaluation_id: DataTypes.INTEGER,
+            activity_evaluation_id: DataTypes.INTEGER
         },
         {
             timestamps: true,
@@ -19,7 +21,9 @@ module.exports = (sequelize, DataTypes) => {
     Booking.associate = function(models) {
         Booking.belongsTo(models.Activity, {foreignKey: 'activity_id', target_key: 'id'});
         Booking.belongsTo(models.Activity_Date, {foreignKey: 'activity_date_id', target_key: 'id'});
-        Booking.belongsTo(models.User, {foreignKey: 'user_id', target_key: 'id'})
+        Booking.belongsTo(models.User, {foreignKey: 'user_id', target_key: 'id'});
+        Booking.belongsTo(models.Guide_Evaluation, {foreignKey: 'guide_evaluation_id', target_key: 'id'});
+        Booking.belongsTo(models.Activity_Evaluation, {foreignKey: 'activity_evaluation_id', target_key: 'id'});
     };
     return Booking;
 };

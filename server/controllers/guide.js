@@ -1,14 +1,15 @@
+const models = require('../models');
 const Guide = require('../models').Guide;
 const User = require('../models').User;
 const Activity = require('../models').Activity;
 const Message = require('../models').Message;
 const Activity_Date = require('../models').Activity_Date;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
-const models = require('../models');
 const Booking = require('../models').Booking;
 
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
+
 var sequelize = models.sequelize;
 
 
