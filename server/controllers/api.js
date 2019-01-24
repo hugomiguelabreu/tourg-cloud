@@ -9,6 +9,7 @@ const Category = require('../models').Category;
 const City = require('../models').City;
 
 const sequelize = require("sequelize");
+const Op = sequelize.Op;
 
 exports.activities = function(req, res) {
 
@@ -117,21 +118,20 @@ exports.activities_city = function (req, res) {
         .catch((error) => res.status(400).send(error));
 };
 
-exports.add_category = function (req, res) {
-
-    return Category
-        .create({
-            name: req.body.name
-        })
-        .then((cc) => res.status(200).send(cc))
-        .catch((error) => res.status(400).send(error));
-};
-
 exports.activity_dates = function (req, res) {
 
     return Activity
         .findByPk(req.params.id, {
-            include: Activity_Date
+            group: ['Activity.id','Activity_Dates.id', "Activity_Dates->Bookings.id"],
+            include:{
+                model: Activity_Date,
+                attributes: ['id', 'price', 'timestamp',
+                    [sequelize.fn('COUNT', sequelize.col('Activity_Dates->Bookings.id')), 'bookings']],
+                include:{
+                    model: Booking,
+                    attributes: ['id']
+                }
+            }
         })
         .then(activities => {
             res.status(200).send(activities)
