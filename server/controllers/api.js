@@ -141,3 +141,83 @@ exports.activity_dates = function (req, res) {
             return res.status(400).send(error);
         });
 };
+
+exports.search_city = function (req, res) {
+    return Activity
+        .findAll({
+            where: {
+                city: {
+                    $iLike: req.params.city
+                }
+            },
+            attributes: ['id','title', 'description', 'city', 'lat', 'lng',
+                [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
+                [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
+            group: ['Activity_Evaluations.id',"Activity.id", "Guide.id", "Guide->User.id", "Guide->Guide_Evaluations.id"],
+            include: [{
+                model: Guide,
+                attributes: ['id', 'account_number', 'swift',
+                    [sequelize.fn('SUM', sequelize.col('Guide->Guide_Evaluations.score')), 'total_guide_score'],
+                    [sequelize.fn('COUNT', sequelize.col('Guide->Guide_Evaluations.score')), 'n_guide_score']],
+                include: [{
+                    model: User,
+                    attributes: ['email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
+
+                },{
+                    model: Guide_Evaluation,
+                    attributes: ['id']
+                }]
+            },{
+                model: Activity_Evaluation,
+                attributes: ['id']
+            }]
+        })
+        .then(function (activities) {
+            res.status(200).send(activities)
+        })
+        .catch(function (error) {
+            console.log(error);
+            return res.status(400).send(error);
+        });
+};
+
+exports.search_dates = function (req, res) {
+    return Activity
+        .findAll({
+            where: {
+                city: {
+                    $iLike: req.params.city
+                }
+            },
+            attributes: ['id','title', 'description', 'city', 'lat', 'lng',
+                [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
+                [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
+            group: ['Activity_Evaluations.id',"Activity.id", "Guide.id", "Guide->User.id", "Guide->Guide_Evaluations.id"],
+            include: [{
+                model: Guide,
+                attributes: ['id', 'account_number', 'swift',
+                    [sequelize.fn('SUM', sequelize.col('Guide->Guide_Evaluations.score')), 'total_guide_score'],
+                    [sequelize.fn('COUNT', sequelize.col('Guide->Guide_Evaluations.score')), 'n_guide_score']],
+                include: [{
+                    model: User,
+                    attributes: ['email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
+
+                },{
+                    model: Guide_Evaluation,
+                    attributes: ['id']
+                }]
+            },{
+                model: Activity_Evaluation,
+                attributes: ['id']
+            },{
+                model: Activity_Date
+            }]
+        })
+        .then(function (activities) {
+            res.status(200).send(activities)
+        })
+        .catch(function (error) {
+            console.log(error);
+            return res.status(400).send(error);
+        });
+};
