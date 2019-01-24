@@ -146,8 +146,10 @@ exports.create_activity = function(req, res, next) {
             description: req.body.description,
             category_id: req.body.category_id,
             city: req.body.city,
+            n_people: req.body.n_people,
+            duration: req.body.duration,
             lat: req.body.lat,
-            lng: req.body.lng,
+            lng: req.body.lng
         }, {transaction: t}).then(function (activity) {
 
             // console.log(Object.keys(activity.__proto__));

@@ -1,6 +1,6 @@
 const Guide = require('../models').Guide;
 const City = require('../models').City;
-
+const Category = require('../models').Category;
 // create guide -> register
 // TODO only admins create guides ???
 exports.create_guide = function(req, res) {
