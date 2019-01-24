@@ -1,4 +1,5 @@
 const Guide = require('../models').Guide;
+const City = require('../models').City;
 
 // create guide -> register
 // TODO only admins create guides ???
