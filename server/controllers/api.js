@@ -1,4 +1,3 @@
-const sequelize = require("sequelize");
 const Activity = require('../models').Activity;
 const Guide = require('../models').Guide;
 const User = require('../models').User;
@@ -8,6 +7,8 @@ const Activity_Date = require('../models').Activity_Date;
 const Booking = require('../models').Booking;
 const Category = require('../models').Category;
 const City = require('../models').City;
+
+const sequelize = require("sequelize");
 
 exports.activities = function(req, res) {
 

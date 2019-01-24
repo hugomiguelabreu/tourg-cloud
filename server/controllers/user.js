@@ -1,3 +1,4 @@
+const models = require('../models');
 const User = require('../models').User;
 const Credit_Card = require('../models').Credit_Card;
 const Activity = require('../models').Activity;
@@ -12,7 +13,6 @@ const Booking = require('../models').Booking;
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
 
-const models = require('../models');
 const sequelize = require("sequelize");
 const Sequelize = models.sequelize;
 
@@ -101,32 +101,8 @@ exports.add_credit_card = function(req, res) {
 
     })
         .catch((error) => res.status(400).send(error));
-
-
-
-
-    // return Credit_Card
-    //     .create({
-    //         number: req.body.number,
-    //         expiry_date: req.body.expiry_date,
-    //         user_id: req.body.user_id
-    //     })
-    //     .then((cc) => res.status(201).send(cc))
-    //     .catch((error) => res.status(400).send(error));
 };
-//
-// exports.send_message = function (req, res, next) { // true user -> guide | false guide -> user
-//
-//     return Message
-//         .create({
-//             msg: req.body.msg,
-//             way: true,
-//             user_id: req.body.user_id,
-//             guide_id: req.body.guide_id
-//         })
-//         .then((cc) => res.status(201).send(cc))
-//         .catch((error) => res.status(400).send(error));
-// };
+
 
 exports.add_complaint = function (req, res, next) { // true user -> guide | false guide -> user
 
@@ -245,19 +221,4 @@ exports.bookings = function (req, res, next) {
     }).catch(function (err) {
         res.status(400).send(err)
     })
-    
-
-    // User.findByPk(req.user.id) // TODO verify activity_date_id == activity_id ???
-    //     .then(function (user) {
-    //
-    //         user.getBookings()
-    //             .then(function (bookings) {
-    //                 res.status(201).send(bookings)
-    //             }).catch(function (err) {
-    //                 res.status(400).send(err)
-    //         })
-    //
-    //     }).catch(function (err) {
-    //         res.status(400).send(err)
-    //     })
 };
