@@ -245,8 +245,8 @@ exports.bookings = function (req, res, next) {
             model: Activity_Date,
         }]
     }).then(function (bookings) {
-        res.status(201).send(bookings)
+        res.status(200).send(bookings)
     }).catch(function (err) {
-        res.status(400).send(err)
+        res.status(400).send(err.message)
     })
 };
