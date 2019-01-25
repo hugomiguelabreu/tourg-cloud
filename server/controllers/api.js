@@ -18,104 +18,77 @@ exports.activities = function(req, res) {
             attributes: ['id','title', 'description', 'city', 'lat', 'lng',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
-            group: ['Activity_Evaluations.id',"Activity.id", "Guide.id", "Guide->User.id", "Guide->Guide_Evaluations.id"],
+            group: ["Activity.id", "Guide.id", "Activity_Evaluations.activity_id", "Guide->User.id"],
+            order: ['id'],
             include: [{
-                model: Guide,
-                attributes: ['id', 'account_number', 'swift',
-                    [sequelize.fn('SUM', sequelize.col('Guide->Guide_Evaluations.score')), 'total_guide_score'],
-                    [sequelize.fn('COUNT', sequelize.col('Guide->Guide_Evaluations.score')), 'n_guide_score']],
-                include: [{
-                    model: User,
-                    attributes: ['email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
-
-                },{
-                    model: Guide_Evaluation,
-                    attributes: []
-                }]
-            },{
                 model: Activity_Evaluation,
                 attributes: []
+                },{
+                    model: Guide,
+                    attributes:['id', 'account_number', 'swift',
+                        [sequelize.literal(' ( SELECT SUM("Guide_Evaluations"."score") AS "total_guide_score" ' +
+                            'FROM "Guides" AS "Guide" LEFT OUTER JOIN "Users" AS "User" ON "Guide"."user_id" = "User"."id" ' +
+                            'LEFT OUTER JOIN "Guide_Evaluations" AS "Guide_Evaluations" ON "Guide"."id" = "Guide_Evaluations"."guide_id" ' +
+                            'WHERE "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'total_guide_score'],
+                        [sequelize.literal(' ( SELECT COUNT("Guide_Evaluations"."score") AS "n_guide_score" ' +
+                            'FROM "Guides" AS "Guide" LEFT OUTER JOIN "Users" AS "User" ON "Guide"."user_id" = "User"."id" ' +
+                            'LEFT OUTER JOIN "Guide_Evaluations" AS "Guide_Evaluations" ON "Guide"."id" = "Guide_Evaluations"."guide_id" ' +
+                            'WHERE  "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'n_guide_score']
+                    ],
+                    include:{
+                        model: User,
+                        attributes: ['id', 'email', 'phone', 'bio', 'photo_path']
+                    }
             }]
         })
         .then(function (activities) {
-
-            // let i;
-            // let result = [];
-            //
-            // console.log(activities)
-
-            //console.log(activities[0][0]);
-
-            // for(i=0; i < activities.length; i++){
-            //     let res = activities.toJSON();
-            //     delete res[i]['Guide']['Guide_Evaluations'];
-            //     delete res[i]['Activity_Evaluations'];
-            //     console.log(i);
-            //     console.log(res)
-            //     result[i] = res
-            // }
 
             res.status(200).send(activities)
         })
         .catch(function (error) {
             console.log(error);
-            return res.status(400).send(error);
+            return res.status(400).send(error.message);
         });
 };
 
 exports.activity = function (req, res) {
+
     return Activity
         .findByPk(req.params.id,{
             attributes: ['id','title', 'description', 'city', 'lat', 'lng',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
-            group: ['Activity_Evaluations.id',"Activity.id", "Guide.id", "Guide->User.id", "Guide->Guide_Evaluations.id"],
-             include: [{
-                model: Guide,
-                attributes: ['id', 'account_number', 'swift',
-                    [sequelize.fn('SUM', sequelize.col('Guide->Guide_Evaluations.score')), 'total_guide_score'],
-                    [sequelize.fn('COUNT', sequelize.col('Guide->Guide_Evaluations.score')), 'n_guide_score']],
-                include: [{
-                    model: User,
-                    attributes: ['id','email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
-
-                },{
-                    model: Guide_Evaluation,
-                    attributes: []
-                }]
-            },{
+            group: ["Activity.id", "Guide.id", "Activity_Evaluations.activity_id", "Guide->User.id"],
+            order: ['id'],
+            include: [{
                 model: Activity_Evaluation,
                 attributes: []
+                },{
+                    model: Guide,
+                    attributes:['id', 'account_number', 'swift',
+                        [sequelize.literal(' ( SELECT SUM("Guide_Evaluations"."score") AS "total_guide_score" ' +
+                            'FROM "Guides" AS "Guide" LEFT OUTER JOIN "Users" AS "User" ON "Guide"."user_id" = "User"."id" ' +
+                            'LEFT OUTER JOIN "Guide_Evaluations" AS "Guide_Evaluations" ON "Guide"."id" = "Guide_Evaluations"."guide_id" ' +
+                            'WHERE "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'total_guide_score'],
+                        [sequelize.literal(' ( SELECT COUNT("Guide_Evaluations"."score") AS "n_guide_score" ' +
+                            'FROM "Guides" AS "Guide" LEFT OUTER JOIN "Users" AS "User" ON "Guide"."user_id" = "User"."id" ' +
+                            'LEFT OUTER JOIN "Guide_Evaluations" AS "Guide_Evaluations" ON "Guide"."id" = "Guide_Evaluations"."guide_id" ' +
+                            'WHERE  "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'n_guide_score']
+                    ],
+                    include:{
+                        model: User,
+                        attributes: ['id', 'email', 'phone', 'bio', 'photo_path']
+                    }
             }]
         })
         .then(function (activities) {
-
-            if(!activities)
-                res.status(404).json({message: 'activity not found'});
-
-            // let result = activities.toJSON();
-            //
-            // delete result['Guide']['Guide_Evaluations'];
-            // delete result['Activity_Evaluations'];
 
             res.status(200).send(activities)
         })
         .catch(function (error) {
             console.log(error);
-            return res.status(400).send(error);
+            return res.status(400).send(error.message);
         });
-};
-
-exports.activities_city = function (req, res) {
-    return Activity
-        .findAll({
-            where:{
-                country: req.params.country,
-                city: req.params.city
-            }
-        })
-        .then((user) => res.status(200).send(user))
-        .catch((error) => res.status(400).send(error));
 };
 
 exports.activity_dates = function (req, res) {
@@ -143,6 +116,7 @@ exports.activity_dates = function (req, res) {
 };
 
 exports.search_city = function (req, res) {
+
     return Activity
         .findAll({
             where: {
@@ -153,35 +127,41 @@ exports.search_city = function (req, res) {
             attributes: ['id','title', 'description', 'city', 'lat', 'lng',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
-            group: ['Activity_Evaluations.id',"Activity.id", "Guide.id", "Guide->User.id", "Guide->Guide_Evaluations.id"],
+            group: ["Activity.id", "Guide.id", "Activity_Evaluations.activity_id", "Guide->User.id"],
+            order: ['id'],
             include: [{
-                model: Guide,
-                attributes: ['id', 'account_number', 'swift',
-                    [sequelize.fn('SUM', sequelize.col('Guide->Guide_Evaluations.score')), 'total_guide_score'],
-                    [sequelize.fn('COUNT', sequelize.col('Guide->Guide_Evaluations.score')), 'n_guide_score']],
-                include: [{
-                    model: User,
-                    attributes: ['email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
-
-                },{
-                    model: Guide_Evaluation,
-                    attributes: []
-                }]
-            },{
                 model: Activity_Evaluation,
                 attributes: []
+                },{
+                    model: Guide,
+                    attributes:['id', 'account_number', 'swift',
+                        [sequelize.literal(' ( SELECT SUM("Guide_Evaluations"."score") AS "total_guide_score" ' +
+                            'FROM "Guides" AS "Guide" LEFT OUTER JOIN "Users" AS "User" ON "Guide"."user_id" = "User"."id" ' +
+                            'LEFT OUTER JOIN "Guide_Evaluations" AS "Guide_Evaluations" ON "Guide"."id" = "Guide_Evaluations"."guide_id" ' +
+                            'WHERE "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'total_guide_score'],
+                        [sequelize.literal(' ( SELECT COUNT("Guide_Evaluations"."score") AS "n_guide_score" ' +
+                            'FROM "Guides" AS "Guide" LEFT OUTER JOIN "Users" AS "User" ON "Guide"."user_id" = "User"."id" ' +
+                            'LEFT OUTER JOIN "Guide_Evaluations" AS "Guide_Evaluations" ON "Guide"."id" = "Guide_Evaluations"."guide_id" ' +
+                            'WHERE  "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'n_guide_score']
+                    ],
+                    include:{
+                        model: User,
+                        attributes: ['id', 'email', 'phone', 'bio', 'photo_path']
+                    }
             }]
         })
         .then(function (activities) {
+
             res.status(200).send(activities)
         })
         .catch(function (error) {
             console.log(error);
-            return res.status(400).send(error);
+            return res.status(400).send(error.message);
         });
 };
 
 exports.search_dates = function (req, res) {
+
     return Activity
         .findAll({
             where: {
@@ -192,37 +172,43 @@ exports.search_dates = function (req, res) {
             attributes: ['id','title', 'description', 'city', 'lat', 'lng',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
-            group: ["Activity.id", "Guide.id", "Guide->User.id", "Guide->Guide_Evaluations.id", 'Activity_Evaluations.id', "Activity_Dates.id"],
+            group: ["Activity.id", "Guide.id", "Activity_Evaluations.activity_id", "Guide->User.id", "Activity_Dates.id"],
+            order: ['id'],
             include: [{
-                model: Guide,
-                attributes: ['id', 'account_number', 'swift',
-                    [sequelize.fn('SUM', sequelize.col('Guide->Guide_Evaluations.score')), 'total_guide_score'],
-                    [sequelize.fn('COUNT', sequelize.col('Guide->Guide_Evaluations.score')), 'n_guide_score']],
-                include: [{
-                    model: User,
-                    attributes: ['email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
-
-                },{
-                    model: Guide_Evaluation,
-                    attributes: []
-                }]
-            },{
                 model: Activity_Evaluation,
-                attributes: []
-            },{
+                attributes: [],
+                },{
+                    model: Guide,
+                    attributes:['id', 'account_number', 'swift',
+                        [sequelize.literal(' ( SELECT SUM("Guide_Evaluations"."score") AS "total_guide_score" ' +
+                            'FROM "Guides" AS "Guide" LEFT OUTER JOIN "Users" AS "User" ON "Guide"."user_id" = "User"."id" ' +
+                            'LEFT OUTER JOIN "Guide_Evaluations" AS "Guide_Evaluations" ON "Guide"."id" = "Guide_Evaluations"."guide_id" ' +
+                            'WHERE "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'total_guide_score'],
+                        [sequelize.literal(' ( SELECT COUNT("Guide_Evaluations"."score") AS "n_guide_score" ' +
+                            'FROM "Guides" AS "Guide" LEFT OUTER JOIN "Users" AS "User" ON "Guide"."user_id" = "User"."id" ' +
+                            'LEFT OUTER JOIN "Guide_Evaluations" AS "Guide_Evaluations" ON "Guide"."id" = "Guide_Evaluations"."guide_id" ' +
+                            'WHERE  "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'n_guide_score']
+                    ],
+                    include:{
+                        model: User,
+                        attributes: ['id', 'email', 'phone', 'bio', 'photo_path']
+                    }
+                },{
                 model: Activity_Date,
                 where: {
                     timestamp: {
                         $between: [req.params.start_date, req.params.end_date]
                     }
-                }
+                },
+                attributes: []
             }]
         })
         .then(function (activities) {
+
             res.status(200).send(activities)
         })
         .catch(function (error) {
             console.log(error);
-            return res.status(400).send(error);
+            return res.status(400).send(error.message);
         });
 };

@@ -277,3 +277,50 @@ exports.gps = function (req, res) {
     })
 
 };
+
+exports.statistics = function (req, res) {
+
+    Booking.findAll({
+        attributes: ['id', ['Activity.title', 'kappa']],
+        include:[{
+            model: Activity,
+            attributes: ['id'],
+            include: Activity_Date
+        }]
+
+    }).then(function(bookings){
+        res.status(200).send(bookings);
+    }).catch(function(err){
+        res.status(400).send(err.message);
+    })
+
+
+    // Guide.findAll({
+    //     where:{
+    //         user_id: req.user.id
+    //     },
+    //     order: [sequelize.fn('date_trunc', 'day', sequelize.col('Activities->Bookings.createdAt'))],
+    //     group: [sequelize.fn('date_trunc', 'day', sequelize.col('Activities->Activity_Dates.timestamp')), "Guide.id",
+    //         "Activities.id", "Activities->Bookings.id", "Activities->Activity_Dates.id"],
+    //  internal/modules/cjs/loader.js   attributes:[],
+    //     include:[{
+    //         model: Activity,
+    //         where:{
+    //             id: 57
+    //         },
+    //         attributes: ['id', 'title'],
+    //         include: [{
+    //             model: Booking
+    //         },{
+    //             model: Activity_Date
+    //         }
+    //         ]
+    //     }]
+    // }).then(function(bookings){
+    //     res.status(200).send(bookings);
+    // }).catch(function(err){
+    //     console.log(err)
+    //     res.status(400).send(err.message);
+    //})
+
+};
