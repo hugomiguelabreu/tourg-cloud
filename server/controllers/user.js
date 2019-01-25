@@ -191,33 +191,63 @@ exports.evaluate_guide = function (req, res, next) {
     });
 };
 
+/* Trying to book an activity for n_people. */
 exports.book_activity = function (req, res, next) {
+    var activity_id = req.body.activity_id;
+    var activity_date_id = req.body.activity_date_id; 
+    var n_bookings = req.body.n_booking;
+    var user_id = req.user.id;
+    var user_aux,activity_aux,booking_aux;
+   
+    return Sequelize.transaction(function(t){
+        return Booking.count({
+            where:{
+                activity_id: activity_id,
+                activity_date_id: activity_date_id
+            }
+        },{transaction: t})
+        .then(function(count){
+            if(count > 0) throw new Error();
 
-    User.findByPk(req.user.id) //TODO transaction ???
-        .then(function (user) {
-
-            Booking.create({
-                user_id: user.id,
-                activity_id: req.body.activity_id,
-                activity_date_id: req.body.activity_date_id
-
-            }).then(function (booking) {
-
-                user.addBooking(booking)
-                    .then(function (result) {
-                        res.status(200).send(booking)
-                    }).catch(function (err) {
-                    res.status(400).send(err)
-                })
-
-            }).catch(function (err) {
-                res.status(400).send(err)
-            })
-
-        }).catch(function (err) {
-            res.status(400).send(err)
+            return Activity.findByPk(activity_id
+            ,{transaction: t})
         })
+            .then(function(activity){
+                activity_aux = activity;
+                if(n_bookings > activity.n_people){
+                    throw new Error();
+                }
+                return User.findByPk(user_id
+                ,{transaction: t})
+            })
+                .then(function (user) {
+                    user_aux = user;
+                    return Booking.create({
+                    user_id: user.id,
+                    activity_id: activity_id,
+                    activity_date_id: activity_date_id
+
+                },{transaction: t})
+                })     
+                    .then(function(booking) {
+                        booking_aux = booking;
+                        return user_aux.addBooking(booking.id,{transaction: t});
+                    })
+                
+    }).then(function(result) {
+        console.log("Transaction Succeed");
+        user_aux.password = undefined;
+        res.status(200).json({
+                        user: user_aux,
+                        activity: activity_aux,
+                        booking: booking_aux
+        });
+        send(result);
+    }).catch(function(err){
+        res.status(400).send(err.message);
+    });
 };
+
 
 exports.bookings = function (req, res, next) {
 

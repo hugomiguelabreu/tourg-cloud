@@ -109,11 +109,9 @@ exports.update_data = function (req,res,next) {
             bio: req.body.bio
             },
             { where:{
-
                     id: req.user.id
                     }
             ,transaction: t}).then(function(user){
-  
             return Guide.update({
                 account_number: req.body.account_number,
                 swift: req.body.swift
@@ -126,10 +124,23 @@ exports.update_data = function (req,res,next) {
 
     }).then(function(guide) {
         console.log("Transaction Succeed");
-        res.status(200).json({message: "Update Succeed"});
+        res.status(200).json({
+            user: {
+              email: req.body.email,
+              password: undefined,
+              name: req.body.name,
+              phone: req.body.phone,
+              bio: req.body.bio  
+            },
+            guide: {
+                user_id: req.user.id,
+                account_number: req.body.account_number,
+                swift: req.body.swift
+            }
+        });
     }).catch(function(err){
         console.log("Transaction error: " + err);
-        res.status(400).json({message: 'Update Error'}); 
+        res.status(400).json({message: err.message}); 
     });
 
 
@@ -277,3 +288,28 @@ exports.gps = function (req, res) {
     })
 
 };
+
+
+/* End some tour */
+exports.end_tour = function(req,res){
+    var activity_id = req.body.activity_id;
+    var activity_date_id = req.body.activity_date_id;
+
+    Booking.update({
+        finished : true
+    },{
+    where:{
+        activity_id : activity_id,
+        activity_date_id : activity_date_id
+    }})
+    .then(function(booking){
+        res.status(200).send("OK");
+    })
+    .catch(function(err){
+        console.log(err.message);
+        res.status(400).send(err.message);
+    });
+};
+
+// TODO
+exports.delete_activity = function(req,res){};
