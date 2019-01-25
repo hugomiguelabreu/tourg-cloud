@@ -278,49 +278,36 @@ exports.gps = function (req, res) {
 
 };
 
-exports.statistics = function (req, res) {
+exports.booking_statistics = function (req, res) {
 
-    Booking.findAll({
-        attributes: ['id', ['Activity.title', 'kappa']],
-        include:[{
-            model: Activity,
-            attributes: ['id'],
-            include: Activity_Date
-        }]
-
+    return Activity_Date.findAll({
+        where: sequelize.literal('"Activity_Date"."activity_id" IN ( SELECT "Activity"."id" ' +
+            'FROM "Activities" AS "Activity" INNER JOIN "Guides" AS "Guide" ON "Activity"."guide_id" = "Guide"."id" ' +
+            'AND "Guide"."user_id" = 2)'),
+        group:["Activity_Date.id"],
+        attributes: ['id','timestamp',
+            [sequelize.fn('COUNT', sequelize.col('Bookings.id')), 'n_bookings']],
+        include:{
+            model:Booking,
+            attributes: []
+        },
+        order: [['timestamp', 'asc']],
     }).then(function(bookings){
         res.status(200).send(bookings);
     }).catch(function(err){
+        console.log(err);
         res.status(400).send(err.message);
     })
+};
 
+exports.revenue_statistics = function (req, res) {
 
-    // Guide.findAll({
-    //     where:{
-    //         user_id: req.user.id
-    //     },
-    //     order: [sequelize.fn('date_trunc', 'day', sequelize.col('Activities->Bookings.createdAt'))],
-    //     group: [sequelize.fn('date_trunc', 'day', sequelize.col('Activities->Activity_Dates.timestamp')), "Guide.id",
-    //         "Activities.id", "Activities->Bookings.id", "Activities->Activity_Dates.id"],
-    //  internal/modules/cjs/loader.js   attributes:[],
-    //     include:[{
-    //         model: Activity,
-    //         where:{
-    //             id: 57
-    //         },
-    //         attributes: ['id', 'title'],
-    //         include: [{
-    //             model: Booking
-    //         },{
-    //             model: Activity_Date
-    //         }
-    //         ]
-    //     }]
-    // }).then(function(bookings){
-    //     res.status(200).send(bookings);
-    // }).catch(function(err){
-    //     console.log(err)
-    //     res.status(400).send(err.message);
-    //})
+    return Activity_Date.findAll({
 
+    }).then(function (bookings) {
+        res.status(200).send(bookings);
+    }).catch(function (err) {
+        console.log(err.message);
+        res.status(400).send(err.message);
+    })
 };

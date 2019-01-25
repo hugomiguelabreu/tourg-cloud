@@ -24,9 +24,9 @@ router.post('/booking/:id/accept',passport.authenticate('jwt', { session: false 
 
 router.post('/booking/:id/gps',passport.authenticate('jwt', { session: false }),guide_controller.gps);
 
-router.get('/statistics',passport.authenticate('jwt', { session: false }),guide_controller.statistics);
+router.get('/booking_statistics',passport.authenticate('jwt', { session: false }),guide_controller.booking_statistics);
 
-
+router.get('/revenue_statistics',passport.authenticate('jwt', { session: false }),guide_controller.revenue_statistics);
 
 
 module.exports = router;
