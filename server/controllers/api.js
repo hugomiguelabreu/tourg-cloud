@@ -37,7 +37,7 @@ exports.activities = function(req, res) {
                     ],
                     include:{
                         model: User,
-                        attributes: ['id', 'email', 'phone', 'bio', 'photo_path']
+                        attributes: ['id', 'name', 'email', 'phone', 'bio', 'photo_path', 'createdAt']
                     }
             }]
         })
@@ -77,7 +77,7 @@ exports.activity = function (req, res) {
                     ],
                     include:{
                         model: User,
-                        attributes: ['id', 'email', 'phone', 'bio', 'photo_path']
+                        attributes: ['id', 'name', 'email', 'phone', 'bio', 'photo_path', 'createdAt']
                     }
             }]
         })
@@ -146,7 +146,7 @@ exports.search_city = function (req, res) {
                     ],
                     include:{
                         model: User,
-                        attributes: ['id', 'email', 'phone', 'bio', 'photo_path']
+                        attributes: ['id', 'name', 'email', 'phone', 'bio', 'photo_path', 'createdAt']
                     }
             }]
         })
@@ -191,7 +191,7 @@ exports.search_dates = function (req, res) {
                     ],
                     include:{
                         model: User,
-                        attributes: ['id', 'email', 'phone', 'bio', 'photo_path']
+                        attributes: ['id', 'name', 'email', 'phone', 'bio', 'photo_path', 'createdAt']
                     }
                 },{
                 model: Activity_Date,
