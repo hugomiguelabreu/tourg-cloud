@@ -275,8 +275,26 @@ exports.bookings = function (req, res, next) {
             model: Activity_Date,
         }]
     }).then(function (bookings) {
-        res.status(201).send(bookings)
+        res.status(200).send(bookings)
     }).catch(function (err) {
-        res.status(400).send(err)
+        res.status(400).send(err.message)
     })
+};
+
+exports.gps = function (req, res) {
+
+    Booking.findByPk(req.params.id).then(function (booking) {
+        booking.update({
+            user_lat: req.body.lat,
+            user_lng: req.body.lng
+        }).then(function(book){
+            res.status(200).send(book);
+        }).catch(function(err){
+            console.log(err);
+            res.status(400).send(err);
+        })
+    }).catch(function(err){
+        res.status(400).send(err);
+    })
+
 };

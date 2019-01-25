@@ -24,7 +24,11 @@ router.post('/booking/:id/accept',passport.authenticate('jwt', { session: false 
 
 router.post('/booking/:id/gps',passport.authenticate('jwt', { session: false }),guide_controller.gps);
 
+
 router.post('/booking/end_tour',passport.authenticate('jwt', { session: false }),guide_controller.end_tour);
+
+router.get('/statistics',passport.authenticate('jwt', { session: false }),guide_controller.statistics);
+
 
 router.post('/delete_activity',passport.authenticate('jwt', { session: false }),guide_controller.delete_activity);
 

@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             updatedAt: false
         });
     Guide_Evaluation.associate = function(models) {
-        Guide_Evaluation.belongsTo(models.Guide, {foreignKey: 'guide_id'})
+        Guide_Evaluation.belongsTo(models.Guide, {foreignKey: 'guide_id', target_key: 'id'})
     };
     return Guide_Evaluation;
 };
