@@ -251,7 +251,7 @@ exports.book_activity = function (req, res, next) {
 
 exports.bookings = function (req, res, next) {
 
-    Booking.findAll({
+    return Booking.findAll({
         where:{
             user_id: req.user.id
         },
@@ -281,9 +281,36 @@ exports.bookings = function (req, res, next) {
     })
 };
 
+exports.booking = function (req, res, next) {
+
+    return Booking.findOne({
+        where:{
+            id: req.params.id,
+            user_id: req.user.id
+        },
+        include: [{
+            model: Activity_Date
+        },{
+            model: Activity,
+            include:{
+                model: Guide,
+                include: {
+                    model: User,
+                    attributes: ['id', 'email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
+                }
+            }
+        }]
+    }).then(function(bookings){
+        res.status(200).send(bookings);
+    }).catch(function(err){
+        console.log(err);
+        res.status(400).send(err);
+    })
+};
+
 exports.gps = function (req, res) {
 
-    Booking.findByPk(req.params.id).then(function (booking) {
+    return Booking.findByPk(req.params.id).then(function (booking) {
         booking.update({
             user_lat: req.body.lat,
             user_lng: req.body.lng

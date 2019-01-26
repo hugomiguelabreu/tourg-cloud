@@ -33,6 +33,8 @@ router.post('/book_activity', passport.authenticate('jwt', { session: false }), 
 
 router.get('/bookings', passport.authenticate('jwt', { session: false }), user_controller.bookings);
 
+router.get('/booking/:id', passport.authenticate('jwt', { session: false }), user_controller.booking);
+
 router.post('/booking/:id/gps',passport.authenticate('jwt', { session: false }),user_controller.gps);
 
 module.exports = router;
