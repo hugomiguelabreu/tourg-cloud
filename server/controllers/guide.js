@@ -332,7 +332,11 @@ exports.end_tour = function(req,res){
     var activity_date_id = req.body.activity_date_id;
 
     Booking.update({
-        finished : true
+        finished : true,
+        guide_lat: null,
+        guide_lng: null,
+        user_lat: null,
+        user_lng: null
     },{
     where:{
         activity_id : activity_id,
