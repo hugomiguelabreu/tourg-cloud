@@ -5,6 +5,7 @@ const Activity = require('../models').Activity;
 const Message = require('../models').Message;
 const Activity_Date = require('../models').Activity_Date;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
+const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Booking = require('../models').Booking;
 
 var passport = require("passport");
@@ -332,7 +333,11 @@ exports.end_tour = function(req,res){
     var activity_date_id = req.body.activity_date_id;
 
     Booking.update({
-        finished : true
+        finished : true,
+        guide_lat: null,
+        guide_lng: null,
+        user_lat: null,
+        user_lng: null
     },{
     where:{
         activity_id : activity_id,
@@ -364,5 +369,43 @@ exports.balance = function(req,res){
 
 };
 
-// TODO
-exports.delete_activity = function(req,res){};
+exports.delete_activity = function(req,res){
+    var activity_id = req.body.activity_id;
+
+
+    return sequelize.transaction(function (t) {
+
+         return Booking.destroy({
+                            where:{
+                                activity_id: activity_id
+                            }
+        },{transaction: t})
+        .then(function (activity){
+                return Activity_Evaluation.destroy({
+                    where:{
+                        activity_id: activity_id
+                    }
+                },{transaction: t})
+                .then(function(activity_evaluation){
+                        return Activity_Date.destroy({
+                            where: {
+                            activity_id: activity_id
+                            }    
+                      },{transaction: t})
+                        .then(function(booking){
+                            return Activity.destroy({
+                                        where:{
+                                            id: activity_id
+                                        }
+                                        },{transaction: t})
+                        })
+                })
+        })})
+    .then(function(result){
+        res.status(200).send("OK");
+    })
+    .catch(function(err){
+        console.log(err.message);
+        res.status(400).send(err.message);
+    })
+};
