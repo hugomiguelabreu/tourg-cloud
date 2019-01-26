@@ -5,11 +5,13 @@ module.exports = (sequelize, DataTypes) => {
         title: DataTypes.TEXT,
         description: DataTypes.STRING,
         city: DataTypes.STRING,
-        n_people: DataTypes.INTEGER,
-        duration: DataTypes.INTEGER,
         lat: DataTypes.FLOAT,
         lng: DataTypes.FLOAT,
-        category_id: DataTypes.INTEGER
+        category_id: DataTypes.INTEGER,
+        price: DataTypes.INTEGER,
+        min_people: DataTypes.INTEGER,
+        n_people: DataTypes.INTEGER,
+        duration: DataTypes.INTEGER,
     }, {});
     Activity.associate = function(models) {
         Activity.hasMany(models.Activity_Evaluation, {foreignKey: 'activity_id'});
