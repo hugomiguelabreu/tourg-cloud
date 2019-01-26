@@ -214,7 +214,7 @@ exports.book_activity = function (req, res, next) {
         })
             .then(function(activity){
                 activity_aux = activity;
-                if(n_bookings > activity.n_people){
+                if(n_bookings > activity.n_people && n_bookings < activity.min_people){
                     throw new Error();
                 }
                 return User.findByPk(user_id
