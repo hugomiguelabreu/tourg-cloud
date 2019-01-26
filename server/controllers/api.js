@@ -148,6 +148,17 @@ exports.search_city = function (req, res) {
                         model: User,
                         attributes: ['id', 'name', 'email', 'phone', 'bio', 'photo_path', 'createdAt']
                     }
+            },{
+                model: Activity_Date,
+                where:{
+                    id:{
+                        $notIn: [sequelize.literal(' SELECT "Activity_Dates"."id" ' +
+                            'FROM "Activity_Dates" RIGHT OUTER JOIN "Bookings" ON "Activity_Dates"."id" = "Bookings"."activity_date_id" ' +
+                            'WHERE "Activity_Dates"."id" > 0')], //TODO >0 jabardo ???
+                    }
+                },
+                attributes: []
+
             }]
         })
         .then(function (activities) {
@@ -198,6 +209,11 @@ exports.search_dates = function (req, res) {
                 where: {
                     timestamp: {
                         $between: [req.params.start_date, req.params.end_date]
+                    },
+                    id:{
+                        $notIn: [sequelize.literal(' SELECT "Activity_Dates"."id" ' +
+                            'FROM "Activity_Dates" RIGHT OUTER JOIN "Bookings" ON "Activity_Dates"."id" = "Bookings"."activity_date_id" ' +
+                            'WHERE "Activity_Dates"."id" > 0')], //TODO >0 jabardo ???
                     }
                 },
                 attributes: []
