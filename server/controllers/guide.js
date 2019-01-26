@@ -351,5 +351,18 @@ exports.end_tour = function(req,res){
     });
 };
 
-// TODO
-exports.delete_activity = function(req,res){};
+exports.delete_activity = function(req,res){
+    var activity_id = req.body.activity_id;
+
+    Activity.destroy({where: {
+                        id: activity_id
+                    }
+    }).then(function(activity){
+        console.log("Activity then destroy:" + activity);
+        res.status(200).send("OK");
+    }).catch(function(err){
+        console.log("Activity then destroy:" + err.message);
+        res.status(400).send(err.message);
+    });
+
+};
