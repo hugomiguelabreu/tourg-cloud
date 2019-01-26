@@ -193,58 +193,51 @@ exports.evaluate_guide = function (req, res, next) {
 
 /* Trying to book an activity for n_people. */
 exports.book_activity = function (req, res, next) {
-    var activity_id = req.body.activity_id;
-    var activity_date_id = req.body.activity_date_id; 
-    var n_bookings = req.body.n_booking;
-    var user_id = req.user.id;
-    var user_aux,activity_aux,booking_aux;
-   
-    return Sequelize.transaction(function(t){
-        return Booking.count({
+
+    return Sequelize.transaction(function (t) {
+
+        return Booking.findAll({
             where:{
-                activity_id: activity_id,
-                activity_date_id: activity_date_id
+                activity_date_id: req.body.activity_date_id
             }
-        },{transaction: t})
-        .then(function(count){
-            if(count > 0) throw new Error();
+        }, {transaction: t}).then(function (b) {
 
-            return Activity.findByPk(activity_id
-            ,{transaction: t})
-        })
-            .then(function(activity){
-                activity_aux = activity;
-                if(n_bookings > activity.n_people){
-                    throw new Error();
-                }
-                return User.findByPk(user_id
-                ,{transaction: t})
-            })
-                .then(function (user) {
-                    user_aux = user;
+            if(b[0])
+                throw new Error('booking already exists on this date');
+
+            return Activity.findByPk(req.body.activity_id, {transaction: t})
+                .then(function (activity) {
+
+                    if(req.body.n_bookings > activity.n_people || req.body.n_bookings < activity.min_people)
+                        throw new Error('invalid number of people');
+
                     return Booking.create({
-                    user_id: user.id,
-                    activity_id: activity_id,
-                    activity_date_id: activity_date_id
+                        user_id: req.user.id,
+                        activity_id: req.body.activity_id,
+                        activity_date_id: req.body.activity_date_id
+                    },{transaction: t}).then(function (booking) {
 
-                },{transaction: t})
-                })     
-                    .then(function(booking) {
-                        booking_aux = booking;
-                        return user_aux.addBooking(booking.id,{transaction: t});
+                        return Guide.findByPk(activity.guide_id, {transaction: t})
+                            .then(function (guide) {
+
+                                let value = (req.body.n_bookings * activity.price) + parseFloat(guide.balance);
+                                console.log(value)
+                                console.log(guide.balance)
+
+
+                                return guide.update({
+                                    balance: value
+                                })
+
+                            })
+
                     })
-                
-    }).then(function(result) {
-        console.log("Transaction Succeed");
-        user_aux.password = undefined;
-        res.status(200).json({
-                        user: user_aux,
-                        activity: activity_aux,
-                        booking: booking_aux
+                })
         });
-        send(result);
-    }).catch(function(err){
-        res.status(400).send(err.message);
+    }).then(function (result) {
+        res.status(200).send(result)
+    }).catch(function (err) {
+        res.status(400).json({message: err.message});
     });
 };
 
@@ -294,6 +287,7 @@ exports.booking = function (req, res, next) {
             model: Activity,
             include:{
                 model: Guide,
+                attributes:['id','account_number','swift','createdAt'],
                 include: {
                     model: User,
                     attributes: ['id', 'email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']

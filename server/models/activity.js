@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         lat: DataTypes.FLOAT,
         lng: DataTypes.FLOAT,
         category_id: DataTypes.INTEGER,
-        price: DataTypes.INTEGER,
+        price: DataTypes.DECIMAL(6,2),
         min_people: DataTypes.INTEGER,
         n_people: DataTypes.INTEGER,
         duration: DataTypes.INTEGER,

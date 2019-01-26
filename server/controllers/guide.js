@@ -5,6 +5,7 @@ const Activity = require('../models').Activity;
 const Message = require('../models').Message;
 const Activity_Date = require('../models').Activity_Date;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
+const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Booking = require('../models').Booking;
 
 var passport = require("passport");
@@ -351,5 +352,60 @@ exports.end_tour = function(req,res){
     });
 };
 
-// TODO
-exports.delete_activity = function(req,res){};
+/* End some tour */
+exports.balance = function(req,res){
+
+    return Guide.findOne({
+        where:{
+            user_id: req.user.id
+        },
+        attributes: ['balance']
+    }).then(function(balance){
+        res.status(200).send(balance);
+    }).catch(function(err){
+        console.log(err.message);
+        res.status(400).send(err.message);
+    });
+
+};
+
+exports.delete_activity = function(req,res){
+    var activity_id = req.body.activity_id;
+
+
+    return sequelize.transaction(function (t) {
+
+         return Booking.destroy({
+                            where:{
+                                activity_id: activity_id
+                            }
+        },{transaction: t})
+        .then(function (activity){
+                return Activity_Evaluation.destroy({
+                    where:{
+                        activity_id: activity_id
+                    }
+                },{transaction: t})
+                .then(function(activity_evaluation){
+                        return Activity_Date.destroy({
+                            where: {
+                            activity_id: activity_id
+                            }    
+                      },{transaction: t})
+                        .then(function(booking){
+                            return Activity.destroy({
+                                        where:{
+                                            id: activity_id
+                                        }
+                                        },{transaction: t})
+                        })
+                })
+        })})
+    .then(function(result){
+        res.status(200).send("OK");
+    })
+    .catch(function(err){
+        console.log(err.message);
+        res.status(400).send(err.message);
+    })
+};

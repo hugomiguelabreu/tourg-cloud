@@ -11,6 +11,10 @@ router.post('/login',guide_controller.login);
 /* Update guide info */
 router.post('/update',passport.authenticate('jwt',{ session: false}), guide_controller.update_data);
 
+/* --- Monies --- */
+
+router.get('/balance',passport.authenticate('jwt',{ session: false}), guide_controller.balance);
+
 /* --- Activities --- */
 
 /* create activity */
