@@ -347,5 +347,22 @@ exports.end_tour = function(req,res){
     });
 };
 
+/* End some tour */
+exports.balance = function(req,res){
+
+    return Guide.findOne({
+        where:{
+            user_id: req.user.id
+        },
+        attributes: ['balance']
+    }).then(function(balance){
+        res.status(200).send(balance);
+    }).catch(function(err){
+        console.log(err.message);
+        res.status(400).send(err.message);
+    });
+
+};
+
 // TODO
 exports.delete_activity = function(req,res){};
