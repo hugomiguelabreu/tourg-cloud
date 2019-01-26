@@ -160,10 +160,13 @@ exports.create_activity = function(req, res, next) {
             n_people: req.body.n_people,
             duration: req.body.duration,
             lat: req.body.lat,
-            lng: req.body.lng
+            lng: req.body.lng,
+            price: req.body.price,
+            title: req.body.title,
+            min_people: req.body.min_people
         }, {transaction: t}).then(function (activity) {
 
-            // console.log(Object.keys(activity.__proto__));
+            console.log(Object.keys(activity.__proto__));
 
             let dates = req.body.dates.split(',');
             let i;
