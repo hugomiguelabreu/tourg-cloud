@@ -9,5 +9,5 @@ module.exports = (sequelize, DataTypes) => {
         Activity_Language.belongsTo(models['Language'], {foreignKey: 'language'});
     
     };
-    return Highlight;
+    return Activity_Language;
 };
