@@ -6,10 +6,10 @@ module.exports = {
           'Activity_Languages',
           'language',
           {
-              type: Sequelize.INTEGER,
+              type: Sequelize.STRING,
               references: {
                   model: 'Languages', // name of Target Table
-                  key: 'id', // key in Target model that we're referencing
+                  key: 'name', // key in Target model that we're referencing
               },
               onUpdate: 'CASCADE',
               onDelete: 'SET NULL',

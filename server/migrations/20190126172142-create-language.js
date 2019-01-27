@@ -2,14 +2,8 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Languages', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING, primaryKey: true
       }
     });
   },

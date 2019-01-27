@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
         Activity.belongsTo(models.Guide, {foreignKey: 'guide_id'});
         Activity.belongsTo(models.Category, {foreignKey: 'category_id'});
         Activity.hasMany(models.Booking, {foreignKey: 'activity_id', sourceKey: 'id'});
-        Activity.hasMany(models.Activity_Language, {foreignKey: 'activity_id'});
+        Activity.hasMany(models.Highlight, {foreignKey: 'activity_id'});
+        Activity.hasMany(models.Activity_Language, {foreignKey: 'activity'});
     };
     return Activity;
 };

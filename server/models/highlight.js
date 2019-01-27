@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
         description: DataTypes.STRING
     }, {});
     Highlight.associate = function(models) {
-        Highlight.belongsTo(models['Activity'], {foreignKey: {allowNull: false, name:'highlight_id'}});
+        Highlight.belongsTo(models['Activity'], {foreignKey:'id', sourceKey: 'id'});
     };
     return Highlight;
 };

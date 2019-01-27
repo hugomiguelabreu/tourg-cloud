@@ -7,12 +7,15 @@ const Activity_Date = require('../models').Activity_Date;
 const Booking = require('../models').Booking;
 const Category = require('../models').Category;
 const City = require('../models').City;
+const Highlight = require('../models').Highlight;
+const Activity_Language = require('../models').Activity_Language;
+const Language = require('../models').Language;
 
 const sequelize = require("sequelize");
 const Op = sequelize.Op;
 
 exports.activities = function(req, res) {
-
+    
     return Activity
         .findAll({
             attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people',
@@ -58,7 +61,7 @@ exports.activity = function (req, res) {
             attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
-            group: ["Activity.id", "Guide.id", "Activity_Evaluations.activity_id", "Guide->User.id"],
+            group: ["Activity.id", "Guide.id", "Activity_Evaluations.activity_id", "Guide->User.id", "Highlights.id","Activity_Languages.id"],
             order: ['id'],
             include: [{
                 model: Activity_Evaluation,
@@ -73,13 +76,21 @@ exports.activity = function (req, res) {
                         [sequelize.literal(' ( SELECT COUNT("Guide_Evaluations"."score") AS "n_guide_score" ' +
                             'FROM "Guides" AS "Guide" LEFT OUTER JOIN "Users" AS "User" ON "Guide"."user_id" = "User"."id" ' +
                             'LEFT OUTER JOIN "Guide_Evaluations" AS "Guide_Evaluations" ON "Guide"."id" = "Guide_Evaluations"."guide_id" ' +
-                            'WHERE  "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'n_guide_score']
+                            'WHERE  "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'n_guide_scores']
                     ],
                     include:{
                         model: User,
                         attributes: ['id', 'name', 'email', 'phone', 'bio', 'photo_path', 'createdAt']
                     }
-            }]
+            },{
+                model: Highlight,
+                attributes: ['title','description']
+            },
+            {
+                model: Activity_Language,
+                attributes: ['language']
+            }
+        ]
         })
         .then(function (activities) {
 
