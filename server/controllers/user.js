@@ -246,17 +246,32 @@ exports.book_activity = function (req, res, next) {
                         return Guide.findByPk(activity.guide_id, {transaction: t})
                             .then(function (guide) {
 
-                                let value = (req.body.n_bookings * activity.price) + parseFloat(guide.balance);
-                                console.log(value)
-                                console.log(guide.balance)
+                                if(req.body.type && req.body.last_four && req.body.token){
+                                    return Credit_Card.create({
+                                        user_id: req.user.id,
+                                        token: req.body.token,
+                                        last_four: req.body.last_four,
+                                        type: req.body.type
+                                    }, {transaction: t}).then(function (cc) {
 
+                                        //TODO process payment
+
+                                        let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
+
+                                        return guide.update({
+                                            balance: value
+                                        })
+                                    })
+                                }
+
+                                //TODO process payment
+
+                                let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
 
                                 return guide.update({
                                     balance: value
                                 })
-
                             })
-
                     })
                 })
         });

@@ -167,7 +167,7 @@ exports.create_activity = function(req, res, next) {
             min_people: req.body.min_people
         }, {transaction: t}).then(function (activity) {
 
-            console.log(Object.keys(activity.__proto__));
+            //console.log(Object.keys(activity.__proto__));
 
             let dates = req.body.dates.split(',');
             let i;
