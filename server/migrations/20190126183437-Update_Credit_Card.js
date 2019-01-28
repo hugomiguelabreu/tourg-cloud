@@ -17,7 +17,7 @@ module.exports = {
 
             queryInterface.addColumn(
                 'Credit_Cards',
-                'token',
+                'customer_id',
                 {
                     type: Sequelize.TEXT,
                     allowNull: false

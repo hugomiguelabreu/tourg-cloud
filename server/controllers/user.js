@@ -93,9 +93,8 @@ exports.update = function(req,res){
 exports.add_credit_card = function(req, res) {
 
     return Credit_Card.create({
-
         user_id: req.user.id,
-        token: req.body.token,
+        customer_id: req.body.customer_id,
         last_four: req.body.last_four,
         type: req.body.type
     }).then((cc) => res.status(200).send(cc))
