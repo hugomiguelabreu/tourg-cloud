@@ -90,17 +90,27 @@ exports.update = function(req,res){
 // add credit card
 exports.add_credit_card = function(req, res) {
 
-    user = User.findAll({
+    Credit_Card.create({
+
+        user_id: req.user.id,
+        token: req.body.token,
+        last_four: req.body.last_four,
+        type: req.body.type
+    }).then((cc) => res.status(200).send(cc))
+    .catch((error) => res.status(400).send(error.message));
+
+};
+
+// add credit card
+exports.credit_card = function(req, res) {
+
+    Credit_Card.findAll({
         where: {
-            email: req.body.email
+            user_id: req.user.id
         }
-    }).then(function (user) {
+    }).then((cc) => res.status(200).send(cc))
+    .catch((error) => res.status(400).send(error.message));
 
-        console.log(user[0].name);
-        res.status(201).send(user)
-
-    })
-        .catch((error) => res.status(400).send(error));
 };
 
 
