@@ -17,6 +17,8 @@ router.post('/add_credit_card', passport.authenticate('jwt', { session: false })
 
 router.get('/credit_cards', passport.authenticate('jwt', { session: false }), user_controller.credit_card);
 
+router.delete('/credit_card', passport.authenticate('jwt', { session: false }), user_controller.delete_credit_card);
+
 // router.post('/send_message', user_controller.send_message);
 
 /* --- Complaints --- */

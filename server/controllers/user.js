@@ -90,7 +90,7 @@ exports.update = function(req,res){
 // add credit card
 exports.add_credit_card = function(req, res) {
 
-    Credit_Card.create({
+    return Credit_Card.create({
 
         user_id: req.user.id,
         token: req.body.token,
@@ -104,12 +104,28 @@ exports.add_credit_card = function(req, res) {
 // add credit card
 exports.credit_card = function(req, res) {
 
-    Credit_Card.findAll({
+    return Credit_Card.findAll({
         where: {
             user_id: req.user.id
         }
     }).then((cc) => res.status(200).send(cc))
     .catch((error) => res.status(400).send(error.message));
+
+};
+
+// add credit card
+exports.delete_credit_card = function(req, res) {
+
+    return Credit_Card.findOne({
+        where: {
+            user_id: req.user.id,
+            id: req.body.id
+        }
+    }).then(function (cc) {
+        cc.destroy();
+        res.status(200).json({message: 'deleted'})
+    })
+        .catch((error) => res.status(400).send(error.message));
 
 };
 
