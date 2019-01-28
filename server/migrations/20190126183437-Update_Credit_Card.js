@@ -47,7 +47,7 @@ module.exports = {
 
     down: (queryInterface, Sequelize) => {
         return Promise.all([
-            queryInterface.removeColumn('Credit_Cards', 'token'),
+            queryInterface.removeColumn('Credit_Cards', 'customer_id'),
             queryInterface.removeColumn('Credit_Cards', 'last_four'),
             queryInterface.removeColumn('Credit_Cards', 'type')
         ])

@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
         name: DataTypes.STRING,
         phone: DataTypes.STRING,
         bio: DataTypes.STRING,
-        photo_path: DataTypes.STRING
+        photo_path: DataTypes.STRING,
+        notification_token: DataTypes.TEXT
     }, {});
     User.associate = function(models) {
         User.hasMany(models.Message, {foreignKey: 'user_id'});
