@@ -52,7 +52,17 @@ exports.login = function(req,res){
                                 var payload = {id:user[0].id};
                                 var token = jwt.sign(payload,process.env.key);
                                 user[0].password='';
-                                res.json({ token: token, user: user[0]});
+
+                                if(req.body.notification_token){
+                                    user[0].update({
+                                        notification_token: req.body.notification_token
+                                    }).then(result => {
+                                        res.json({ token: token, user: user[0]});
+                                    })
+                                }else{
+                                    res.json({ token: token, user: user[0]});
+                                }
+
                              }
                              else{
                                 res.status(401).json({message:"passwords did not match"});

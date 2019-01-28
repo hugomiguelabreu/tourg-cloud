@@ -64,26 +64,39 @@ exports.login = function(req,res){
                         else if(user[0].password === req.body.password) {
                                 var payload = {id:user[0].id};
                                 var token = jwt.sign(payload,process.env.key);
-                                Guide.findAll({ where: {
-                                                           user_id:user[0].id
-                                                        },
-                                                        attributes: ['id', 'account_number', 'swift',
-                                                            [sequelize.fn('SUM', sequelize.col('Guide_Evaluations.score')), 'total_guide_score'],
-                                                            [sequelize.fn('COUNT', sequelize.col('Guide_Evaluations.score')), 'n_guide_score']],
-                                                        group: ["Guide.id", "User.id"],
-                                                        include: [{
-                                                            model: User,
-                                                        },{
-                                                            model: Guide_Evaluation,
-                                                            attributes: []
-                                                        }]
-                                                      })
-                                    .then(function(guide){
-                                        guide[0].password='';
+                                Guide.findAll({
+                                    where: {
+                                       user_id:user[0].id
+                                    },
+                                    attributes: ['id', 'account_number', 'swift',
+                                        [sequelize.fn('SUM', sequelize.col('Guide_Evaluations.score')), 'total_guide_score'],
+                                        [sequelize.fn('COUNT', sequelize.col('Guide_Evaluations.score')), 'n_guide_score']],
+                                    group: ["Guide.id", "User.id"],
+                                    include: [{
+                                        model: User,
+                                    },{
+                                        model: Guide_Evaluation,
+                                        attributes: []
+                                    }]
+                                })
+                                .then(function(guide){
+                                    guide[0].password='';
+
+                                    if(req.body.notification_token){
+                                        guide[0].update({
+                                            notification_token: req.body.notification_token
+                                        }).then(result => {
+                                            res.json({ token: token, user: guide[0]});
+                                        })
+                                    }
+
+                                    else {
                                         res.json({ token: token, user: guide[0]});
-                                    }).catch(function(error){
-                                        res.status(400).send(error);
-                                    });
+                                    }
+
+                                }).catch(function(error){
+                                    res.status(400).send(error);
+                                });
 
                              }
                              else{
