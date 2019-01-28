@@ -16,6 +16,8 @@ var jwt = require('jsonwebtoken');
 const sequelize = require("sequelize");
 const Sequelize = models.sequelize;
 
+const stripe = require("stripe")("sk_test_uuFlZ3ucNIgOPNPwdZ9hjDyD");
+
 
 /* user sign up */
 exports.create_user = function(req, res) {
@@ -246,31 +248,108 @@ exports.book_activity = function (req, res, next) {
                         return Guide.findByPk(activity.guide_id, {transaction: t})
                             .then(function (guide) {
 
-                                if(req.body.type && req.body.last_four && req.body.token){
-                                    return Credit_Card.create({
-                                        user_id: req.user.id,
-                                        token: req.body.token,
-                                        last_four: req.body.last_four,
-                                        type: req.body.type
-                                    }, {transaction: t}).then(function (cc) {
+                                if(req.body.token && req.body.save === 'true'){
 
-                                        //TODO process payment
+                                    console.log('cc e save');
 
-                                        let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
+                                    return stripe.customers.create({
+                                        description: 'Customer for ' + activity.title,
+                                        source: req.body.token // obtained with Stripe.js
+                                    }). then(function (customer) {
 
-                                        return guide.update({
-                                            balance: value
+                                        return Credit_Card.create({
+                                            user_id: req.user.id,
+                                            customer_id: customer.id,
+                                        }, {transaction: t}).then(function (cc) {
+
+                                            let value = (req.body.n_booking * activity.price) * 100;
+                                            console.log(value);
+
+                                            return stripe.charges.create({
+                                                amount: value,
+                                                currency: "eur",
+                                                customer: customer.id,
+                                                description: "Charge for " + activity.title
+                                            }).then(function (result) {
+
+                                                if (result.status === 'succeeded'){
+                                                    let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
+
+                                                    return guide.update({
+                                                        balance: value
+                                                    })
+                                                }
+
+                                                throw new Error('payment error')
+
+                                            }).catch(function (err) {
+                                                console.log(err)
+                                                throw new Error('payment error')
+                                            });
                                         })
-                                    })
+
+
+                                    });
                                 }
 
-                                //TODO process payment
+                                else{
 
-                                let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
+                                    if(req.body.token && req.body.save === 'false'){
 
-                                return guide.update({
-                                    balance: value
-                                })
+                                        console.log('cc mas nao save');
+
+                                        let value = (req.body.n_booking * activity.price) * 100;
+
+                                        return stripe.charges.create({
+                                            amount: value,
+                                            currency: "eur",
+                                            source: req.body.token,
+                                            description: "Charge for " + activity.title
+                                        }).then(function (result) {
+
+                                            if (result.status === 'succeeded'){
+                                                let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
+
+                                                return guide.update({
+                                                    balance: value
+                                                })
+                                            }
+
+                                            throw new Error('payment error')
+                                        })
+                                    }
+
+                                    else{
+
+                                        console.log('costumer id');
+
+                                        let value = (req.body.n_booking * activity.price) * 100;
+
+                                        return stripe.charges.create({
+                                            amount: value,
+                                            currency: "eur",
+                                            customer: req.body.customer_id,
+                                            description: "Charge for " + activity.title
+                                        }).then(function (result) {
+
+                                            if (result.status === 'succeeded'){
+                                                let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
+
+                                                return guide.update({
+                                                    balance: value
+                                                })
+                                            }
+
+                                            throw new Error('payment error')
+
+                                        }).catch(function (err) {
+                                            console.log(err)
+                                            throw new Error('payment error')
+                                        });
+
+                                    }
+
+                                }
                             })
                     })
                 })
