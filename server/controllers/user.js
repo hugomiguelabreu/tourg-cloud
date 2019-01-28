@@ -260,6 +260,8 @@ exports.book_activity = function (req, res, next) {
                                         return Credit_Card.create({
                                             user_id: req.user.id,
                                             customer_id: customer.id,
+                                            type: req.body.type,
+                                            last_four: req.body.last_four
                                         }, {transaction: t}).then(function (cc) {
 
                                             let value = (req.body.n_booking * activity.price) * 100;
