@@ -20,7 +20,8 @@
     "pug": "2.0.0-beta11",
     "request": "^2.88.0",
     "sequelize": "^4.41.2",
-    "sequelize-cli": "^5.4.0"
+    "sequelize-cli": "^5.4.0",
+    "stripe": "^6.22.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.6"
