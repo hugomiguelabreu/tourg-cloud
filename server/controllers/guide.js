@@ -331,11 +331,22 @@ exports.gps = function (req, res) {
         }).then(function(book){
 
             if(old_lat === null){
-                user = User.findByPk(book.user_id)
-                notifications.send_notification(user.notification_token,
-                    'Your booking has been rejected',
-                    'Your booking for ' + activity.title + ' has been canceled' );
+
+                // notify user
+                let f = async function (){
+
+                    let user = await User.findByPk(book.user_id);
+                    let activity = await Activity.findByPk(book.activity_id);
+
+                    notifications.send_notification(user.notification_token,
+                        'Your guide has started the meet',
+                        'Your guide for ' + activity.title + ' has started the meet' );
+
+                };
+
+                f();
             }
+
             res.status(200).send(book);
         }).catch(function(err){
             console.log(err);
