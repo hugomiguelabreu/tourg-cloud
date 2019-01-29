@@ -33,6 +33,7 @@ app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({
+    limit: '5mb',
     extended: true}));
 
 app.use(bodyParser.json({limit: '5mb'}));
