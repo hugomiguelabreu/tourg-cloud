@@ -39,7 +39,7 @@ var storage = multer.diskStorage({
 
 
 /* Initialize the upload variable through multer set*/
-var upload = multer({storage: storage}).single('image');
+var upload = multer({storage: storage},{fieldSize: 100000}).single('image');
 //.single('image'); // single because we're trying to upload a single image at the time
 
 
