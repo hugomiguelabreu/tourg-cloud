@@ -525,13 +525,13 @@ exports.upload_image = function(req,res){
                         user.update({
                             photo_path: "uploads/" + req.file.filename
                         }).then(function(){
-                            res.send(user.photo_path);
+                            res.status(200).send(user.photo_path);
                         })
                         
                     })
                     .catch(function(err){
                         console.log("Erro");
-                        res.send(err.message);
+                        res.status(400).send(err.message);
                     });
             }
     })
