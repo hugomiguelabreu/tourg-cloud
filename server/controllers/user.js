@@ -519,7 +519,7 @@ exports.upload_image = function(req,res){
         }
         else{
             var user_id = req.user.id;
-            return User.findById(user_id)
+            return User.findByPk(user_id)
                     .then(function(user){
                         console.log("User: " + user);
                         user.update({
@@ -535,7 +535,7 @@ exports.upload_image = function(req,res){
                     });
             }
     })
-}
+};
 
 exports.update_notification_token = function (req, res) {
 
