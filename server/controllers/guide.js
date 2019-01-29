@@ -218,6 +218,21 @@ exports.create_activity = function(req, res, next) {
 
             }
 
+            let languages = req.body.languages.split(',');
+
+            for(i=0; i<highlight_titles.length; i++){
+                p = Highlight
+                    .create({
+                        title: highlight_titles[i],
+                        description: highlight_descriptions[i],
+                        activity_id:activity.id
+                    }, {transaction: t});
+
+                promisses.push(p)
+
+            }
+
+
             return Promise.all(promisses)
         });
 
