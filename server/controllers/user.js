@@ -515,11 +515,10 @@ exports.gps = function (req, res) {
 exports.upload_image = function(req,res){
     upload(req,res, (err) => {
         if(err){
-            res.status(400).send("ERROR");
+            res.status(400).send(err);
         }
         else{
-            var user_id = req.body.user_id;
-            console.log("User_id:" + user_id);
+            var user_id = req.user.id;
             return User.findById(user_id)
                     .then(function(user){
                         console.log("User: " + user);
