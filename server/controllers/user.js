@@ -526,7 +526,7 @@ exports.upload_image = function(req,res){
                         user.update({
                             photo_path: "uploads/" + req.file.filename
                         }).then(function(){
-                            res.send('OK-Image Saved');
+                            res.send(user.photo_path);
                         })
                         
                     })
