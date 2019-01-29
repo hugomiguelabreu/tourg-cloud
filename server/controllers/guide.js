@@ -7,6 +7,7 @@ const Activity_Date = require('../models').Activity_Date;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
 const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Booking = require('../models').Booking;
+const Highlight = require('../models').Highlight;
 
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
@@ -170,8 +171,8 @@ exports.create_activity = function(req, res, next) {
 
     return sequelize.transaction(function (t) {
 
-        return Activity.create({
-            guide_id: req.body.guide_id,
+        return Activity.create({ //TODO get guide id by token
+            guide_id: req.user.guide_id,
             description: req.body.description,
             category_id: req.body.category_id,
             city: req.body.city,
@@ -201,6 +202,22 @@ exports.create_activity = function(req, res, next) {
                 promisses.push(p)
 
             }
+
+            let highlight_titles = req.body.highlight_titles.split(';');
+            let highlight_descriptions = req.body.highlight_descriptions.split(';');
+
+            for(i=0; i<highlight_titles.length; i++){
+                p = Highlight
+                    .create({
+                        title: highlight_titles[i],
+                        description: highlight_descriptions[i],
+                        activity_id:activity.id
+                    }, {transaction: t});
+
+                promisses.push(p)
+
+            }
+
             return Promise.all(promisses)
         });
 
