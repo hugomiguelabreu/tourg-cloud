@@ -8,6 +8,7 @@ const Guide_Evaluation = require('../models').Guide_Evaluation;
 const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Booking = require('../models').Booking;
 const Highlight = require('../models').Highlight;
+const default_photo_path = 'uploads/user.jpg';
 
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
@@ -61,7 +62,8 @@ exports.create_guide = function(req, res) {
             password: req.body.password,
             name: req.body.name,
             phone: req.body.phone,
-            bio: req.body.bio
+            bio: req.body.bio,
+            photo_path: default_photo_path
         }, {transaction: t}).then(function(user) {
 
             c_user = user;

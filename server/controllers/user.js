@@ -9,6 +9,8 @@ const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
 const Guide = require('../models').Guide;
 const Booking = require('../models').Booking;
+const default_photo_path = 'uploads/user.jpg';
+
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
 
@@ -56,7 +58,9 @@ exports.create_user = function(req, res) {
             password: req.body.password,
             name: req.body.name,
             phone: req.body.phone,
-            bio: req.body.bio
+            bio: req.body.bio,
+            photo_path: default_photo_path
+
         })
         .then(function(user){ 
             user.password = '';
