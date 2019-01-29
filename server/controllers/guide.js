@@ -323,7 +323,7 @@ exports.accept_booking = function (req, res) {
 exports.gps = function (req, res) {
 
     Booking.findByPk(req.params.id).then(function (booking) {
-        let old_lat = booking.lat;
+        let old_lat = booking.guide_lat;
 
         return booking.update({
             guide_lat: req.body.lat,
@@ -339,8 +339,8 @@ exports.gps = function (req, res) {
                     let activity = await Activity.findByPk(book.activity_id);
 
                     notifications.send_notification(user.notification_token,
-                        'Your guide has started the meet',
-                        'Your guide for ' + activity.title + ' has started the meet' );
+                        'Your customer has started the meet',
+                        'Your customer for ' + activity.title + ' has started the meet' );
 
                 };
 

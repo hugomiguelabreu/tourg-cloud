@@ -448,7 +448,7 @@ exports.gps = function (req, res) {
 
     return Booking.findByPk(req.params.id).then(function (booking) {
 
-        let old_lat = booking.lat;
+        let old_lat = booking.user_lat;
 
         return booking.update({
             user_lat: req.body.lat,
@@ -471,7 +471,7 @@ exports.gps = function (req, res) {
 
                 f();
             }
-            
+
             res.status(200).send(book);
         }).catch(function(err){
             console.log(err);
