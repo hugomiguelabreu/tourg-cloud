@@ -1,6 +1,6 @@
 const models = require('../models');
 const User = require('../models').User;
-const Credit_Card = require('../models').Credit_Card;
+const Card = require('../models').Card;
 const Activity = require('../models').Activity;
 const Activity_Date = require('../models').Activity_Date;
 const Message = require('../models').Message;
@@ -103,7 +103,7 @@ exports.update = function(req,res){
 // add credit card
 exports.add_credit_card = function(req, res) {
 
-    return Credit_Card.create({
+    return Card.create({
         user_id: req.user.id,
         customer_id: req.body.customer_id,
         last_four: req.body.last_four,
