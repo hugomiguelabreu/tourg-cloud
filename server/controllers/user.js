@@ -118,7 +118,7 @@ exports.add_credit_card = function(req, res) {
 // add credit card
 exports.credit_card = function(req, res) {
 
-    return Credit_Card.findAll({
+    return Card.findAll({
         where: {
             user_id: req.user.id
         }
@@ -129,7 +129,7 @@ exports.credit_card = function(req, res) {
 
 exports.delete_credit_card = function(req, res) {
 
-    return Credit_Card.findOne({
+    return Card.findOne({
         where: {
             user_id: req.user.id,
             id: req.body.id
@@ -268,7 +268,7 @@ exports.book_activity = function (req, res, next) {
                                         source: req.body.token // obtained with Stripe.js
                                     }). then(function (customer) {
 
-                                        return Credit_Card.create({
+                                        return Card.create({
                                             user_id: req.user.id,
                                             customer_id: customer.id,
                                             type: req.body.type,
