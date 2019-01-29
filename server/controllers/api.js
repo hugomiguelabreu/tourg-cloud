@@ -76,7 +76,7 @@ exports.activity = function (req, res) {
                         [sequelize.literal(' ( SELECT COUNT("Guide_Evaluations"."score") AS "n_guide_score" ' +
                             'FROM "Guides" AS "Guide" LEFT OUTER JOIN "Users" AS "User" ON "Guide"."user_id" = "User"."id" ' +
                             'LEFT OUTER JOIN "Guide_Evaluations" AS "Guide_Evaluations" ON "Guide"."id" = "Guide_Evaluations"."guide_id" ' +
-                            'WHERE  "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'n_guide_scores']
+                            'WHERE  "Guide"."id" = "Activity"."guide_id" GROUP BY "Guide"."id", "User"."id")'), 'n_guide_score']
                     ],
                     include:{
                         model: User,
