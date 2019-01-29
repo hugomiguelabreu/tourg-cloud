@@ -130,9 +130,6 @@ exports.update = function(req,res){
 
 // add credit card
 exports.add_credit_card = function(req, res) {
-
-
-
     return Card.create({
         user_id: req.user.id,
         customer_id: req.body.customer_id,
@@ -143,7 +140,7 @@ exports.add_credit_card = function(req, res) {
 
 };
 
-// add credit card
+
 exports.credit_card = function(req, res) {
 
     return Card.findAll({
@@ -478,10 +475,31 @@ exports.booking = function (req, res, next) {
 exports.gps = function (req, res) {
 
     return Booking.findByPk(req.params.id).then(function (booking) {
-        booking.update({
+
+        let old_lat = booking.user_lat;
+
+        return booking.update({
             user_lat: req.body.lat,
             user_lng: req.body.lng
         }).then(function(book){
+
+            if(old_lat === null){
+
+                // notify user
+                let f = async function (){
+
+                    let activity = await Activity.findByPk(book.activity_id);
+                    let guide = await Guide.findByPk(activity.guide_id)
+
+                    notifications.send_notification(guide.notification_token,
+                        'Your guide has started the meet',
+                        'Your guide for ' + activity.title + ' has started the meet' );
+
+                };
+
+                f();
+            }
+
             res.status(200).send(book);
         }).catch(function(err){
             console.log(err);
@@ -492,6 +510,7 @@ exports.gps = function (req, res) {
     })
 
 };
+
 
 exports.upload_image = function(req,res){
     upload(req,res, (err) => {
@@ -518,3 +537,21 @@ exports.upload_image = function(req,res){
             }
     })
 }
+
+exports.update_notification_token = function (req, res) {
+
+    return User.findByPk(req.user.id)
+        .then(function (user) {
+            return user.update({
+                notification_token: req.body.notification_token
+            }).then(function(result){
+                res.status(200).send(result);
+            }).catch(function(err){
+                console.log(err);
+                res.status(400).send(err);
+            })
+        }).catch(function (err) {
+            res.status(400).json({message: 'user does not exist'});
+        })
+};
+

@@ -8,6 +8,8 @@ router.post('/register', guide_controller.create_guide);
 
 router.post('/login',guide_controller.login);
 
+router.post('/update_token', passport.authenticate('jwt', { session: false }), guide_controller.update_notification_token);
+
 /* Update guide info */
 router.post('/update',passport.authenticate('jwt',{ session: false}), guide_controller.update_data);
 

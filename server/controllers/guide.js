@@ -81,7 +81,7 @@ exports.login = function(req,res){
                                     }]
                                 })
                                 .then(function(guide){
-                                    var payload = {id:user[0].id};
+                                    var payload = {id:user[0].id, guide_id:guide[0].id};
                                     var token = jwt.sign(payload,process.env.key);
 
                                     guide[0].password='';
@@ -279,25 +279,14 @@ exports.accept_booking = function (req, res) {
 
     Booking.findOne({
         where:{
-            activity_id: req.params.id,
-
-        },
-        // include:{
-        //     model: Activity,
-        //     include:{
-        //         model: Guide,
-        //         where:
-        //     }
-        // }
-
-
+            id: req.params.id,
+        }
     }).then(function (booking) {
         booking.update({
             accepted: req.body.state
         }).then(function(book){
 
             // notify user
-
             let f = async function (){
 
                 let user = await User.findByPk(book.user_id);
@@ -305,16 +294,16 @@ exports.accept_booking = function (req, res) {
 
                 if(req.body.state === 'true'){
 
-                    notifications.send_notification('ExponentPushToken[9ZcQyeP_QD0xEoINA5RQOV]',
+                    notifications.send_notification(user.notification_token,
                         'Your booking has been accepted',
                         'Your booking for ' + activity.title + ' has been accepted' );
                 }
 
                 if(req.body.state === 'false'){
 
-                    notifications.send_notification('ExponentPushToken[9ZcQyeP_QD0xEoINA5RQOV]',
+                    notifications.send_notification(user.notification_token,
                         'Your booking has been rejected',
-                        'Your booking for ' + activity.title + ' has been rejected' );
+                        'Your booking for ' + activity.title + ' has been canceled' );
                 }
             };
 
@@ -326,7 +315,7 @@ exports.accept_booking = function (req, res) {
             res.status(400).send(err);
         })
     }).catch(function(err){
-        res.status(400).send(err);
+        res.status(400).send(err.message);
     })
 
 };
@@ -334,10 +323,30 @@ exports.accept_booking = function (req, res) {
 exports.gps = function (req, res) {
 
     Booking.findByPk(req.params.id).then(function (booking) {
-        booking.update({
+        let old_lat = booking.guide_lat;
+
+        return booking.update({
             guide_lat: req.body.lat,
             guide_lng: req.body.lng
         }).then(function(book){
+
+            if(old_lat === null){
+
+                // notify user
+                let f = async function (){
+
+                    let user = await User.findByPk(book.user_id);
+                    let activity = await Activity.findByPk(book.activity_id);
+
+                    notifications.send_notification(user.notification_token,
+                        'Your customer has started the meet',
+                        'Your customer for ' + activity.title + ' has started the meet' );
+
+                };
+
+                f();
+            }
+
             res.status(200).send(book);
         }).catch(function(err){
             console.log(err);
@@ -464,4 +473,21 @@ exports.delete_activity = function(req,res){
         console.log(err.message);
         res.status(400).send(err.message);
     })
+};
+
+exports.update_notification_token = function (req, res) {
+
+    return Guide.findByPk(req.user.guide_id)
+        .then(function (guide) {
+            return guide.update({
+                notification_token: req.body.notification_token
+            }).then(function(result){
+                res.status(200).send(result);
+            }).catch(function(err){
+                console.log(err);
+                res.status(400).send(err);
+            })
+        }).catch(function (err) {
+            res.status(400).json({message: 'guide does not exist'});
+        })
 };
