@@ -18,6 +18,35 @@ const notifications = require('../../notifications');
 
 
 
+
+/* ------------------------- ---Multer ----- ---------------------- */
+const multer = require('multer');
+const path = require('path');
+/* Setting a static folder named public */
+//app.use(express.static('./public')); Já está à frente
+/* Set multer storage engine */
+//'../../public/uploads',
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+                cb(null, './public/uploads');
+            },
+    filename: function(req,file,cb){
+        /* Callback function (error, fileName) */
+        cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname)); 
+    }
+});
+
+
+/* Initialize the upload variable through multer set*/
+var upload = multer({storage: storage}).single('image');
+//.single('image'); // single because we're trying to upload a single image at the time
+
+
+
+/* -----------------------------Multer end-def ---------------------*/
+
+
+
 /* -------------------------- Código em desenvolvimento -------------------- */
 /* guide sign-up  - Em desenvolvimento */
 
@@ -508,3 +537,30 @@ exports.update_notification_token = function (req, res) {
             res.status(400).json({message: 'guide does not exist'});
         })
 };
+
+
+
+exports.upload_activity_image = function(req,res) {
+
+
+    upload(req,res,(err) => {
+        if(err)
+                res.status(400).send(err);
+        else{
+            var activity_id = req.body.activity_id;
+            return Activity.findById(activity_id)
+                            .then(function(activity){
+                                activity.update({
+                                    photo_path: "uploads/" + req.file.filename
+                                }).then(function(){
+                                    res.send(activity.photo_path);
+                                })
+                            })
+                            .catch(function(err){
+                                console.log("ERRO: " + err.message);
+                                res.send(activity.photo_path);
+                            })
+        }
+
+    });
+}
