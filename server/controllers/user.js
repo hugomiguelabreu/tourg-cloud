@@ -18,6 +18,7 @@ const Sequelize = models.sequelize;
 
 const stripe = require("stripe")("sk_test_uuFlZ3ucNIgOPNPwdZ9hjDyD");
 
+const notifications = require('../../notifications');
 
 /* user sign up */
 exports.create_user = function(req, res) {
@@ -259,7 +260,7 @@ exports.book_activity = function (req, res, next) {
 
                                 if(req.body.token && req.body.save === 'true'){
 
-                                    console.log('cc e save');
+                                    // Save credit card
 
                                     return stripe.customers.create({
                                         description: 'Customer for ' + activity.title,
@@ -286,6 +287,10 @@ exports.book_activity = function (req, res, next) {
                                                 if (result.status === 'succeeded'){
                                                     let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
 
+                                                    notifications.send_notification(guide.notification_token,
+                                                        'You have a new booking',
+                                                        activity.title + ' has been booked');
+
                                                     return guide.update({
                                                         balance: value
                                                     })
@@ -307,7 +312,7 @@ exports.book_activity = function (req, res, next) {
 
                                     if(req.body.token && req.body.save === 'false'){
 
-                                        console.log('cc mas nao save');
+                                        // User credit card but dont save
 
                                         let value = (req.body.n_booking * activity.price) * 100;
 
@@ -321,6 +326,10 @@ exports.book_activity = function (req, res, next) {
                                             if (result.status === 'succeeded'){
                                                 let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
 
+                                                notifications.send_notification(guide.notification_token,
+                                                    'You have a new booking',
+                                                    activity.title + ' has been booked');
+
                                                 return guide.update({
                                                     balance: value
                                                 })
@@ -332,7 +341,7 @@ exports.book_activity = function (req, res, next) {
 
                                     else{
 
-                                        console.log('costumer id');
+                                        // Charge using customer_id
 
                                         let value = (req.body.n_booking * activity.price) * 100;
 
@@ -345,6 +354,10 @@ exports.book_activity = function (req, res, next) {
 
                                             if (result.status === 'succeeded'){
                                                 let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
+
+                                                notifications.send_notification(guide.notification_token,
+                                                    'You have a new booking',
+                                                    activity.title + ' has been booked');
 
                                                 return guide.update({
                                                     balance: value
