@@ -11,6 +11,8 @@ router.post('/login',user_controller.login);
 
 router.post('/update', passport.authenticate('jwt', { session: false }), user_controller.update);
 
+router.post('/update_token', passport.authenticate('jwt', { session: false }), user_controller.update_notification_token);
+
 /* --- Monies --- */
 
 router.post('/add_credit_card', passport.authenticate('jwt', { session: false }), user_controller.add_credit_card);

@@ -7,46 +7,7 @@ const notifications = require('../notifications');
 
 router.get('/test', function (req, res) { // test route, nao remover pls
 
-    const kek = async function () {
-
-
-
-        let promise = new Promise((resolve, reject) => {
-            setTimeout(() => resolve("done!"), 5000)
-        });
-
-        let result = await promise;
-
-
-        console.log('kekkek')
-    };
-
-    const kappa = async function () {
-
-
-
-        let promise = new Promise((resolve, reject) => {
-            setTimeout(() => resolve("done!"), 5000)
-        });
-
-        let result = await promise;
-
-
-        console.log('KAPPPPPPPPPPPPA')
-
-        kek()
-    };
-
-    kappa().then(function (r) {
-
-    })
-
     res.send('ping')
-
-    // notifications.send_notification('ExponentPushToken[9ZcQyeP_QD0xEoINA5RQOV]', 'frase inspiradora',
-    //     'se é para desistir, é para desistir de ser fraco');
-
-
 });
 
 router.get('/activities', api_controller.activities);
