@@ -13,6 +13,8 @@ var jwt = require('jsonwebtoken');
 
 var sequelize = models.sequelize;
 
+const notifications = require('../../notifications');
+
 
 
 /* -------------------------- Código em desenvolvimento -------------------- */
@@ -62,8 +64,7 @@ exports.login = function(req,res){
                             res.status(401).json({message:"invalid username or password"});
                         }
                         else if(user[0].password === req.body.password) {
-                                var payload = {id:user[0].id};
-                                var token = jwt.sign(payload,process.env.key);
+
                                 Guide.findAll({
                                     where: {
                                        user_id:user[0].id
@@ -80,6 +81,9 @@ exports.login = function(req,res){
                                     }]
                                 })
                                 .then(function(guide){
+                                    var payload = {id:user[0].id};
+                                    var token = jwt.sign(payload,process.env.key);
+
                                     guide[0].password='';
 
                                     if(req.body.notification_token){
@@ -159,7 +163,7 @@ exports.update_data = function (req,res,next) {
 
 
 
-}
+};
 
 
 exports.create_activity = function(req, res, next) {
@@ -273,10 +277,49 @@ exports.get_booking = function(req,res) {
 
 exports.accept_booking = function (req, res) {
 
-    Booking.findByPk(req.params.id).then(function (booking) {
+    Booking.findOne({
+        where:{
+            activity_id: req.params.id,
+
+        },
+        // include:{
+        //     model: Activity,
+        //     include:{
+        //         model: Guide,
+        //         where:
+        //     }
+        // }
+
+
+    }).then(function (booking) {
         booking.update({
             accepted: req.body.state
         }).then(function(book){
+
+            // notify user
+
+            let f = async function (){
+
+                let user = await User.findByPk(book.user_id);
+                let activity = await Activity.findByPk(book.activity_id);
+
+                if(req.body.state === 'true'){
+
+                    notifications.send_notification('ExponentPushToken[9ZcQyeP_QD0xEoINA5RQOV]',
+                        'Your booking has been accepted',
+                        'Your booking for ' + activity.title + ' has been accepted' );
+                }
+
+                if(req.body.state === 'false'){
+
+                    notifications.send_notification('ExponentPushToken[9ZcQyeP_QD0xEoINA5RQOV]',
+                        'Your booking has been rejected',
+                        'Your booking for ' + activity.title + ' has been rejected' );
+                }
+            };
+
+            f();
+
             res.status(200).send(book);
         }).catch(function(err){
             console.log(err)

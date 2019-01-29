@@ -103,6 +103,8 @@ exports.update = function(req,res){
 // add credit card
 exports.add_credit_card = function(req, res) {
 
+
+
     return Card.create({
         user_id: req.user.id,
         customer_id: req.body.customer_id,
@@ -125,7 +127,6 @@ exports.credit_card = function(req, res) {
 
 };
 
-// add credit card
 exports.delete_credit_card = function(req, res) {
 
     return Credit_Card.findOne({
