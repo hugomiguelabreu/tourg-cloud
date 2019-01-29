@@ -9,7 +9,7 @@ const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Booking = require('../models').Booking;
 const Highlight = require('../models').Highlight;
 const default_photo_path = 'uploads/user.jpg';
-
+const default_activity_photo_path = 'uploads/activity.png';
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
 
@@ -213,7 +213,8 @@ exports.create_activity = function(req, res, next) {
             lng: req.body.lng,
             price: req.body.price,
             title: req.body.title,
-            min_people: req.body.min_people
+            min_people: req.body.min_people,
+            photo_path: default_activity_photo_path
         }, {transaction: t}).then(function (activity) {
 
             //console.log(Object.keys(activity.__proto__));
@@ -270,7 +271,7 @@ exports.create_activity = function(req, res, next) {
     }).then(function (result) {
         res.status(201).send(result);
     }).catch(function (err) {
-        res.status(400).send(err)
+        res.status(400).send(err.message)
     });
 };
 
