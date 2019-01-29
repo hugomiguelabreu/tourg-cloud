@@ -41,6 +41,8 @@ router.get('/booking/:id', passport.authenticate('jwt', { session: false }), use
 
 router.post('/booking/:id/gps',passport.authenticate('jwt', { session: false }),user_controller.gps);
 
+/* Upload user image */
+router.post('/upload_image',passport.authenticate('jwt', { session: false }),user_controller.upload_image);
 module.exports = router;
 
 /* ============ Comments ========== */

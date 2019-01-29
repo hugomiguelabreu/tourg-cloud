@@ -9,7 +9,6 @@ const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Guide_Evaluation = require('../models').Guide_Evaluation;
 const Guide = require('../models').Guide;
 const Booking = require('../models').Booking;
-
 var passport = require("passport");
 var jwt = require('jsonwebtoken');
 
@@ -19,6 +18,35 @@ const Sequelize = models.sequelize;
 const stripe = require("stripe")("sk_test_uuFlZ3ucNIgOPNPwdZ9hjDyD");
 
 const notifications = require('../../notifications');
+
+/* ------------------------- ---Multer ----- ---------------------- */
+const multer = require('multer');
+const path = require('path');
+/* Setting a static folder named public */
+//app.use(express.static('./public')); Já está à frente
+/* Set multer storage engine */
+//'../../public/uploads',
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+                cb(null, './public/uploads');
+            },
+    filename: function(req,file,cb){
+        /* Callback function (error, fileName) */
+        cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname)); 
+    }
+});
+
+
+/* Initialize the upload variable through multer set*/
+var upload = multer({storage: storage}).single('image');
+//.single('image'); // single because we're trying to upload a single image at the time
+
+
+
+/* -----------------------------Multer end-def ---------------------*/
+
+
+
 
 /* user sign up */
 exports.create_user = function(req, res) {
@@ -464,3 +492,29 @@ exports.gps = function (req, res) {
     })
 
 };
+
+exports.upload_image = function(req,res){
+    upload(req,res, (err) => {
+        if(err){
+            res.status(400).send("ERROR");
+        }
+        else{
+            var user_id = req.body.user_id;
+            console.log("User_id:" + user_id);
+            return User.findById(user_id)
+                    .then(function(user){
+                        console.log("User: " + user);
+                        user.update({
+                            photo_path: "uploads/" + req.file.filename
+                        }).then(function(){
+                            res.send('OK-Image Saved');
+                        })
+                        
+                    })
+                    .catch(function(err){
+                        console.log("Erro");
+                        res.send(err.message);
+                    });
+            }
+    })
+}
