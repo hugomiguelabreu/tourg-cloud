@@ -3,3 +3,4 @@
 # Dependency directories
 node_modules/
 public/uploads/
+.DS_Store

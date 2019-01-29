@@ -249,6 +249,21 @@ exports.create_activity = function(req, res, next) {
 
             }
 
+            let languages = req.body.languages.split(',');
+
+            for(i=0; i<highlight_titles.length; i++){
+                p = Highlight
+                    .create({
+                        title: highlight_titles[i],
+                        description: highlight_descriptions[i],
+                        activity_id:activity.id
+                    }, {transaction: t});
+
+                promisses.push(p)
+
+            }
+
+
             return Promise.all(promisses)
         });
 
@@ -550,7 +565,7 @@ exports.upload_activity_image = function(req,res) {
                 res.status(400).send(err);
         else{
             var activity_id = req.body.activity_id;
-            return Activity.findById(activity_id)
+            return Activity.findByPk(activity_id)
                             .then(function(activity){
                                 activity.update({
                                     photo_path: "uploads/" + req.file.filename
