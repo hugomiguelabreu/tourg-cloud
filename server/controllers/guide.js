@@ -563,7 +563,7 @@ exports.upload_activity_image = function(req,res) {
                 res.status(400).send(err);
         else{
             var activity_id = req.body.activity_id;
-            return Activity.findById(activity_id)
+            return Activity.findByPk(activity_id)
                             .then(function(activity){
                                 activity.update({
                                     photo_path: "uploads/" + req.file.filename
