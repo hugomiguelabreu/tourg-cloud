@@ -351,7 +351,7 @@ exports.get_booking = function(req,res) {
     })
 };
 
-exports.accept_booking = function (req, res) {
+exports.accept_booking = function (req, res) { //TODO refund stripe
 
     return sequelize.transaction(function (t) {
 
@@ -365,32 +365,60 @@ exports.accept_booking = function (req, res) {
                 accepted: req.body.state
             }, {transaction: t}).then(function (book) {
 
+                if(req.body.state === 'false'){
 
+                    return Guide.findByPk(req.user.guide_id).then(function (guide) {
 
-                // notify user
-                let f = async function () {
+                        let new_value = guide.balance - booking.value;
+                        console.log(new_value);
+                        console.log(booking.value);
 
-                    let user = await User.findByPk(book.user_id);
-                    let activity = await Activity.findByPk(book.activity_id);
+                        return guide.update({
+                            balance: new_value
+                        }, {transaction: t}).then(function (result) {
 
-                    if (req.body.state === 'true') {
+                            // notify user
+                            let f = async function () {
+
+                                let user = await User.findByPk(book.user_id);
+                                let activity = await Activity.findByPk(book.activity_id);
+
+                                notifications.send_notification(user.notification_token,
+                                    'Your booking has been rejected',
+                                    'Your booking for ' + activity.title + ' has been canceled');
+
+                            };
+
+                            f();
+
+                            res.status(200).send(result);
+
+                        })
+
+                    })
+
+                }
+
+                else{
+
+                    let f = async function () {
+
+                        let user = await User.findByPk(book.user_id);
+                        let activity = await Activity.findByPk(book.activity_id);
 
                         notifications.send_notification(user.notification_token,
                             'Your booking has been accepted',
                             'Your booking for ' + activity.title + ' has been accepted');
-                    }
+                    };
 
-                    if (req.body.state === 'false') {
+                    f();
 
-                        notifications.send_notification(user.notification_token,
-                            'Your booking has been rejected',
-                            'Your booking for ' + activity.title + ' has been canceled');
-                    }
-                };
+                    res.status(200).send(book);
+                }
 
-                f();
 
-                res.status(200).send(book);
+
+
             });
         });
 
