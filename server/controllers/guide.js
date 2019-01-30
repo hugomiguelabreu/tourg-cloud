@@ -258,20 +258,52 @@ exports.create_activity = function(req, res, next) {
 
             for(i=0; i<languages.length; i++){
 
-                p = Language.findOrCreate({
-                    attributes: ['name'],
-                    where:{
-                        name: languages[i]
+                p = Language.findOne(
+                    {
+                        where: {
+                            name: languages[i]
+                        },
+                        attributes: ['name']
                     },
-                    transaction: t,
-                }).then( function (lang) {
+                    {transaction: t})
+                    .then(function (lang) {
 
-                    Activity_Language.create({
-                        activity: activity.id,
-                        language: lang[0].name
-                    })
+                        if(lang){
+                            Activity_Language.create({
+                                activity: activity.id,
+                                language: lang.name
+                            }, {transaction: t})
+                        }
 
-                });
+                        else{
+
+                            Language.create({
+                                name: languages[i]
+                            }, {transaction:t}).then(function (lang) {
+                                Activity_Language.create({
+                                    activity: activity.id,
+                                    language: lang.name
+                                }, {transaction: t})
+                            })
+
+                        }
+
+                    });
+
+                // p = Language.findOrCreate({
+                //     attributes: ['name'],
+                //     where:{
+                //         name: languages[i]
+                //     },
+                //     transaction: t,
+                // }).then( function (lang) {
+                //
+                //     Activity_Language.create({
+                //         activity: activity.id,
+                //         language: lang[0].name
+                //     })
+                //
+                // });
 
                 promisses.push(p)
             }
