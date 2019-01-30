@@ -9,7 +9,7 @@ module.exports = {
                 'Bookings',
                 'value',
                 {
-                    type: Sequelize.TEXT,
+                    type: Sequelize.FLOAT,
                     allowNull: true,
                 }
             )
