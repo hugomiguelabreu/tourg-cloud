@@ -8,6 +8,8 @@ const Guide_Evaluation = require('../models').Guide_Evaluation;
 const Activity_Evaluation = require('../models').Activity_Evaluation;
 const Booking = require('../models').Booking;
 const Highlight = require('../models').Highlight;
+const Language = require('../models').Language;
+const Activity_Language = require('../models').Activity_Language;
 const default_photo_path = 'uploads/user.jpg';
 const default_activity_photo_path = 'uploads/activity.png';
 var passport = require("passport");
@@ -202,6 +204,8 @@ exports.create_activity = function(req, res, next) {
 
     return sequelize.transaction(function (t) {
 
+        let promisses = [];
+
         return Activity.create({ //TODO get guide id by token
             guide_id: req.user.guide_id,
             description: req.body.description,
@@ -243,7 +247,7 @@ exports.create_activity = function(req, res, next) {
                     .create({
                         title: highlight_titles[i],
                         description: highlight_descriptions[i],
-                        activity_id:activity.id
+                        activity_id: activity.id
                     }, {transaction: t});
 
                 promisses.push(p)
@@ -252,16 +256,23 @@ exports.create_activity = function(req, res, next) {
 
             let languages = req.body.languages.split(',');
 
-            for(i=0; i<highlight_titles.length; i++){
-                p = Highlight
-                    .create({
-                        title: highlight_titles[i],
-                        description: highlight_descriptions[i],
-                        activity_id:activity.id
-                    }, {transaction: t});
+            for(i=0; i<languages.length; i++){
+                p = Language.findOrCreate({
+                    where:{
+                        name: languages[i]
+                    },
+                    transaction: t,
+                    attributes: ['name']
+                }).then( function (lang) {
+
+                    Activity_Language.create({
+                        activity: activity.id,
+                        language: lang[0].name
+                    })
+
+                });
 
                 promisses.push(p)
-
             }
 
 
