@@ -508,8 +508,8 @@ exports.gps = function (req, res) {
                     let guide = await Guide.findByPk(activity.guide_id)
 
                     notifications.send_notification(guide.notification_token,
-                        'Your guide has started the meet',
-                        'Your guide for ' + activity.title + ' has started the meet' );
+                        'Your customer has started the meet',
+                        'Your customer for ' + activity.title + ' has started the meet' );
 
                 };
 
