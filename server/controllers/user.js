@@ -435,6 +435,7 @@ exports.bookings = function (req, res, next) {
             user_id: req.user.id
         },
         group: ['Booking.id', "Activity.id", "Activity_Date.id", "Activity->Guide.id", "Activity->Guide->User.id"],
+        order: [[{model: Activity_Date}, 'timestamp', 'ASC']],
         include:[{
             model: Activity,
             attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'photo_path',

@@ -306,10 +306,12 @@ exports.get_bookings = function(req,res) {
         where:{
             user_id: req.user.id
         },
+        order: [[ {model:Activity}, {model:Booking}, {model: Activity_Date}, 'timestamp', 'ASC']],
         include:{
             model: Activity,
             include: {
                 model: Booking,
+                required: true,
                 include: [{
                     model: User,
                     attributes: ['email', 'name', 'phone', 'bio', 'photo_path', 'createdAt']
@@ -319,7 +321,8 @@ exports.get_bookings = function(req,res) {
                 },
                 {
                     model: Activity_Date
-                }]
+                },
+                ]
             }
         }
     }).then(function(bookings){
