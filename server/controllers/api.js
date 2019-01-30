@@ -132,7 +132,7 @@ exports.search_city = function (req, res) {
         .findAll({
             where: {
                 city: {
-                    $iLike: req.params.city + '%'
+                    [Op.iLike]: req.params.city + '%'
                 }
             },
             attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people', 'photo_path',
@@ -163,7 +163,7 @@ exports.search_city = function (req, res) {
                 model: Activity_Date,
                 where:{
                     id:{
-                        $notIn: [sequelize.literal(' SELECT "Activity_Dates"."id" ' +
+                        [Op.notIn]: [sequelize.literal(' SELECT "Activity_Dates"."id" ' +
                             'FROM "Activity_Dates" RIGHT OUTER JOIN "Bookings" ON "Activity_Dates"."id" = "Bookings"."activity_date_id" ' +
                             'WHERE "Activity_Dates"."id" > 0')], //TODO >0 jabardo ???
                     }
@@ -188,7 +188,7 @@ exports.search_dates = function (req, res) {
         .findAll({
             where: {
                 city: {
-                    $iLike: req.params.city
+                    [Op.iLike]: req.params.city
                 }
             },
             attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people', 'photo_path',
@@ -219,10 +219,10 @@ exports.search_dates = function (req, res) {
                 model: Activity_Date,
                 where: {
                     timestamp: {
-                        $between: [req.params.start_date, req.params.end_date]
+                        [Op.between]: [req.params.start_date, req.params.end_date]
                     },
                     id:{
-                        $notIn: [sequelize.literal(' SELECT "Activity_Dates"."id" ' +
+                        [Op.notIn]: [sequelize.literal(' SELECT "Activity_Dates"."id" ' +
                             'FROM "Activity_Dates" RIGHT OUTER JOIN "Bookings" ON "Activity_Dates"."id" = "Bookings"."activity_date_id" ' +
                             'WHERE "Activity_Dates"."id" > 0')], //TODO >0 jabardo ???
                     }
