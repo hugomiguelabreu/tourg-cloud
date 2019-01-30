@@ -18,7 +18,7 @@ exports.activities = function(req, res) {
     
     return Activity
         .findAll({
-            attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people',
+            attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people', 'photo_path',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
             group: ["Activity.id", "Guide.id", "Activity_Evaluations.activity_id", "Guide->User.id"],
@@ -58,7 +58,7 @@ exports.activity = function (req, res) {
 
     return Activity
         .findByPk(req.params.id,{
-            attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people',
+            attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people', 'photo_path',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
             group: ["Activity.id", "Guide.id", "Activity_Evaluations.activity_id", "Guide->User.id", "Highlights.id","Activity_Languages.id"],
@@ -135,7 +135,7 @@ exports.search_city = function (req, res) {
                     $iLike: req.params.city
                 }
             },
-            attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people',
+            attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people', 'photo_path',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
             group: ["Activity.id", "Guide.id", "Activity_Evaluations.activity_id", "Guide->User.id"],
@@ -191,7 +191,7 @@ exports.search_dates = function (req, res) {
                     $iLike: req.params.city
                 }
             },
-            attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people',
+            attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people', 'photo_path',
                 [sequelize.fn('SUM', sequelize.col('Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity_Evaluations.score')), 'n_activity_score']],
             group: ["Activity.id", "Guide.id", "Activity_Evaluations.activity_id", "Guide->User.id", "Activity_Dates.id"],
