@@ -629,7 +629,7 @@ exports.upload_activity_image = function(req,res) {
             return Activity.findByPk(activity_id)
                             .then(function(activity){
                                 activity.update({
-                                    photo_path: "uploads/" + req.file.filename
+                                    photo_path: "uploads/" + req.file.name
                                 }).then(function(){
                                     res.send(activity.photo_path);
                                 })
