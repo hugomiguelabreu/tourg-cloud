@@ -132,7 +132,7 @@ exports.search_city = function (req, res) {
         .findAll({
             where: {
                 city: {
-                    $iLike: req.params.city
+                    $iLike: req.params.city + '%'
                 }
             },
             attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'duration', 'n_people', 'category_id', 'price', 'min_people', 'photo_path',
