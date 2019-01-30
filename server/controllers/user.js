@@ -437,7 +437,7 @@ exports.bookings = function (req, res, next) {
         group: ['Booking.id', "Activity.id", "Activity_Date.id", "Activity->Guide.id", "Activity->Guide->User.id"],
         include:[{
             model: Activity,
-            attributes: ['id','title', 'description', 'city', 'lat', 'lng',
+            attributes: ['id','title', 'description', 'city', 'lat', 'lng', 'photo_path',
                 [sequelize.fn('SUM', sequelize.col('Activity->Activity_Evaluations.score')), 'total_activity_score'],
                 [sequelize.fn('COUNT', sequelize.col('Activity->Activity_Evaluations.score')), 'n_activity_score']],
             include: [{
