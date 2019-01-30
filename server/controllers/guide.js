@@ -257,12 +257,13 @@ exports.create_activity = function(req, res, next) {
             let languages = req.body.languages.split(',');
 
             for(i=0; i<languages.length; i++){
+
                 p = Language.findOrCreate({
+                    attributes: ['name'],
                     where:{
                         name: languages[i]
                     },
                     transaction: t,
-                    attributes: ['name']
                 }).then( function (lang) {
 
                     Activity_Language.create({
