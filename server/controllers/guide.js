@@ -372,38 +372,47 @@ exports.accept_booking = function (req, res) { //TODO refund stripe
 
                     return Guide.findByPk(req.user.guide_id).then(function (guide) {
 
-                        let new_value = guide.balance - booking.value;
-                        console.log(new_value);
-                        console.log(booking.value);
+                        return Activity.findByPk(booking.activity_id).then(function (activity) {
 
-                        return guide.update({
-                            balance: new_value
-                        }, {transaction: t}).then(function (result) {
+                            let new_value = parseFloat(guide.balance) - (booking.value);
 
-                            stripe.refunds.create({
-                                charge: booking.value
-                            }).then(function () {
+                            console.log(parseFloat(guide.balance));
+                            console.log(parseFloat(booking.value));
 
-                                // notify user
-                                let f = async function () {
+                            console.log(new_value);
+                            console.log(booking.value);
 
-                                    let user = await User.findByPk(book.user_id);
-                                    let activity = await Activity.findByPk(book.activity_id);
+                            return guide.update({
+                                balance: new_value
+                            }, {transaction: t}).then(function (result) {
 
-                                    notifications.send_notification(user.notification_token,
-                                        'Your booking has been rejected',
-                                        'Your booking for ' + activity.title + ' has been canceled');
-                                };
+                                stripe.refunds.create({
+                                    charge: booking.charge_id
+                                }).then(function () {
 
-                                f();
+                                    // notify user
+                                    let f = async function () {
 
-                                res.status(200).send(result);
+                                        let user = await User.findByPk(book.user_id);
+                                        let activity = await Activity.findByPk(book.activity_id);
 
-                            }).catch(function (err) {
+                                        notifications.send_notification(user.notification_token,
+                                            'Your booking has been rejected',
+                                            'Your booking for ' + activity.title + ' has been canceled');
+                                    };
 
-                                throw new Error('payment error');
+                                    f();
+
+                                    res.status(200).send(result);
+
+                                }).catch(function (err) {
+                                    console.log(err.message)
+
+                                    throw new Error(err.message);
+                                })
                             })
                         })
+
                     })
                 }
 

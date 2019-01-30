@@ -317,8 +317,11 @@ exports.book_activity = function (req, res, next) {
                                                 if (result.status === 'succeeded'){
                                                     let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
 
+                                                    console.log(result.id)
+
                                                     booking.update({
-                                                        value: result.id
+                                                        value: value,
+                                                        charge_id: result.id
                                                     }, {transaction: t});
 
                                                     notifications.send_notification(guide.notification_token,
@@ -359,9 +362,10 @@ exports.book_activity = function (req, res, next) {
 
                                             if (result.status === 'succeeded'){
                                                 let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
-
+                                                console.log(result.id)
                                                 booking.update({
-                                                    value: result.id
+                                                    value: value,
+                                                    charge_id: result.id
                                                 }, {transaction: t});
 
                                                 notifications.send_notification(guide.notification_token,
@@ -392,9 +396,10 @@ exports.book_activity = function (req, res, next) {
 
                                             if (result.status === 'succeeded'){
                                                 let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
-
+                                                console.log(result.id)
                                                 booking.update({
-                                                    value: result.id
+                                                    value: value,
+                                                    charge_id: result.id
                                                 }, {transaction: t});
 
                                                 notifications.send_notification(guide.notification_token,
