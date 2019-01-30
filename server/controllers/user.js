@@ -279,13 +279,10 @@ exports.book_activity = function (req, res, next) {
                     if(req.body.n_bookings > activity.n_people || req.body.n_bookings < activity.min_people)
                         throw new Error('invalid number of people');
 
-                    let booking_value = (req.body.n_booking * activity.price);
-
                     return Booking.create({
                         user_id: req.user.id,
                         activity_id: req.body.activity_id,
-                        activity_date_id: req.body.activity_date_id,
-                        value: booking_value
+                        activity_date_id: req.body.activity_date_id
                     },{transaction: t}).then(function (booking) {
 
                         return Guide.findByPk(activity.guide_id, {transaction: t})
@@ -320,13 +317,17 @@ exports.book_activity = function (req, res, next) {
                                                 if (result.status === 'succeeded'){
                                                     let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
 
+                                                    booking.update({
+                                                        value: result.id
+                                                    }, {transaction: t});
+
                                                     notifications.send_notification(guide.notification_token,
                                                         'You have a new booking',
                                                         activity.title + ' has been booked');
 
                                                     return guide.update({
                                                         balance: value
-                                                    })
+                                                    }, {transaction: t})
                                                 }
 
                                                 throw new Error('payment error')
@@ -359,13 +360,17 @@ exports.book_activity = function (req, res, next) {
                                             if (result.status === 'succeeded'){
                                                 let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
 
+                                                booking.update({
+                                                    value: result.id
+                                                }, {transaction: t});
+
                                                 notifications.send_notification(guide.notification_token,
                                                     'You have a new booking',
                                                     activity.title + ' has been booked');
 
                                                 return guide.update({
                                                     balance: value
-                                                })
+                                                }, {transaction: t})
                                             }
 
                                             throw new Error('payment error')
@@ -388,13 +393,17 @@ exports.book_activity = function (req, res, next) {
                                             if (result.status === 'succeeded'){
                                                 let value = (req.body.n_booking * activity.price) + parseFloat(guide.balance);
 
+                                                booking.update({
+                                                    value: result.id
+                                                }, {transaction: t});
+
                                                 notifications.send_notification(guide.notification_token,
                                                     'You have a new booking',
                                                     activity.title + ' has been booked');
 
                                                 return guide.update({
                                                     balance: value
-                                                })
+                                                }, {transaction: t})
                                             }
 
                                             throw new Error('payment error')

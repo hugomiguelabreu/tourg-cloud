@@ -17,9 +17,9 @@ var jwt = require('jsonwebtoken');
 
 var sequelize = models.sequelize;
 
+const stripe = require("stripe")("sk_test_uuFlZ3ucNIgOPNPwdZ9hjDyD");
+
 const notifications = require('../../notifications');
-
-
 
 
 /* ------------------------- ---Multer ----- ---------------------- */
@@ -377,26 +377,31 @@ exports.accept_booking = function (req, res) { //TODO refund stripe
                             balance: new_value
                         }, {transaction: t}).then(function (result) {
 
-                            // notify user
-                            let f = async function () {
+                            stripe.refunds.create({
+                                charge: booking.value
+                            }).then(function () {
 
-                                let user = await User.findByPk(book.user_id);
-                                let activity = await Activity.findByPk(book.activity_id);
+                                // notify user
+                                let f = async function () {
 
-                                notifications.send_notification(user.notification_token,
-                                    'Your booking has been rejected',
-                                    'Your booking for ' + activity.title + ' has been canceled');
+                                    let user = await User.findByPk(book.user_id);
+                                    let activity = await Activity.findByPk(book.activity_id);
 
-                            };
+                                    notifications.send_notification(user.notification_token,
+                                        'Your booking has been rejected',
+                                        'Your booking for ' + activity.title + ' has been canceled');
+                                };
 
-                            f();
+                                f();
 
-                            res.status(200).send(result);
+                                res.status(200).send(result);
 
+                            }).catch(function (err) {
+
+                                throw new Error('payment error');
+                            })
                         })
-
                     })
-
                 }
 
                 else{
@@ -415,10 +420,6 @@ exports.accept_booking = function (req, res) { //TODO refund stripe
 
                     res.status(200).send(book);
                 }
-
-
-
-
             });
         });
 
@@ -429,50 +430,6 @@ exports.accept_booking = function (req, res) { //TODO refund stripe
         // Transaction has been rolled back
         // err is whatever rejected the promise chain returned to the transaction callback
     });
-
-    // Booking.findOne({
-    //     where:{
-    //         id: req.params.id,
-    //     }
-    // }).then(function (booking) {
-    //     booking.update({
-    //         accepted: req.body.state
-    //     }).then(function(book){
-    //
-    //
-    //
-    //         // notify user
-    //         let f = async function (){
-    //
-    //             let user = await User.findByPk(book.user_id);
-    //             let activity = await Activity.findByPk(book.activity_id);
-    //
-    //             if(req.body.state === 'true'){
-    //
-    //                 notifications.send_notification(user.notification_token,
-    //                     'Your booking has been accepted',
-    //                     'Your booking for ' + activity.title + ' has been accepted' );
-    //             }
-    //
-    //             if(req.body.state === 'false'){
-    //
-    //                 notifications.send_notification(user.notification_token,
-    //                     'Your booking has been rejected',
-    //                     'Your booking for ' + activity.title + ' has been canceled' );
-    //             }
-    //         };
-    //
-    //         f();
-    //
-    //         res.status(200).send(book);
-    //     }).catch(function(err){
-    //         console.log(err)
-    //         res.status(400).send(err);
-    //     })
-    // }).catch(function(err){
-    //     res.status(400).send(err.message);
-    // })
-
 };
 
 exports.gps = function (req, res) {
