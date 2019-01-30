@@ -353,46 +353,97 @@ exports.get_booking = function(req,res) {
 
 exports.accept_booking = function (req, res) {
 
-    Booking.findOne({
-        where:{
-            id: req.params.id,
-        }
-    }).then(function (booking) {
-        booking.update({
-            accepted: req.body.state
-        }).then(function(book){
+    return sequelize.transaction(function (t) {
 
-            // notify user
-            let f = async function (){
+        // chain all your queries here. make sure you return them.
+        return Booking.findOne({
+            where:{
+                id: req.params.id,
+            }
+        }, {transaction: t}).then(function (booking) {
+            return booking.update({
+                accepted: req.body.state
+            }, {transaction: t}).then(function (book) {
 
-                let user = await User.findByPk(book.user_id);
-                let activity = await Activity.findByPk(book.activity_id);
 
-                if(req.body.state === 'true'){
 
-                    notifications.send_notification(user.notification_token,
-                        'Your booking has been accepted',
-                        'Your booking for ' + activity.title + ' has been accepted' );
-                }
+                // notify user
+                let f = async function () {
 
-                if(req.body.state === 'false'){
+                    let user = await User.findByPk(book.user_id);
+                    let activity = await Activity.findByPk(book.activity_id);
 
-                    notifications.send_notification(user.notification_token,
-                        'Your booking has been rejected',
-                        'Your booking for ' + activity.title + ' has been canceled' );
-                }
-            };
+                    if (req.body.state === 'true') {
 
-            f();
+                        notifications.send_notification(user.notification_token,
+                            'Your booking has been accepted',
+                            'Your booking for ' + activity.title + ' has been accepted');
+                    }
 
-            res.status(200).send(book);
-        }).catch(function(err){
-            console.log(err)
-            res.status(400).send(err);
-        })
-    }).catch(function(err){
-        res.status(400).send(err.message);
-    })
+                    if (req.body.state === 'false') {
+
+                        notifications.send_notification(user.notification_token,
+                            'Your booking has been rejected',
+                            'Your booking for ' + activity.title + ' has been canceled');
+                    }
+                };
+
+                f();
+
+                res.status(200).send(book);
+            });
+        });
+
+    }).then(function (result) {
+        // Transaction has been committed
+        // result is whatever the result of the promise chain returned to the transaction callback
+    }).catch(function (err) {
+        // Transaction has been rolled back
+        // err is whatever rejected the promise chain returned to the transaction callback
+    });
+
+    // Booking.findOne({
+    //     where:{
+    //         id: req.params.id,
+    //     }
+    // }).then(function (booking) {
+    //     booking.update({
+    //         accepted: req.body.state
+    //     }).then(function(book){
+    //
+    //
+    //
+    //         // notify user
+    //         let f = async function (){
+    //
+    //             let user = await User.findByPk(book.user_id);
+    //             let activity = await Activity.findByPk(book.activity_id);
+    //
+    //             if(req.body.state === 'true'){
+    //
+    //                 notifications.send_notification(user.notification_token,
+    //                     'Your booking has been accepted',
+    //                     'Your booking for ' + activity.title + ' has been accepted' );
+    //             }
+    //
+    //             if(req.body.state === 'false'){
+    //
+    //                 notifications.send_notification(user.notification_token,
+    //                     'Your booking has been rejected',
+    //                     'Your booking for ' + activity.title + ' has been canceled' );
+    //             }
+    //         };
+    //
+    //         f();
+    //
+    //         res.status(200).send(book);
+    //     }).catch(function(err){
+    //         console.log(err)
+    //         res.status(400).send(err);
+    //     })
+    // }).catch(function(err){
+    //     res.status(400).send(err.message);
+    // })
 
 };
 

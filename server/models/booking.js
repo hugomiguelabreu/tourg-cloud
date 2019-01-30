@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) => {
             activity_review: DataTypes.BOOLEAN,
             guide_evaluation_id: DataTypes.INTEGER,
             activity_evaluation_id: DataTypes.INTEGER,
-            finished: DataTypes.BOOLEAN
+            finished: DataTypes.BOOLEAN,
+            value: DataTypes.FLOAT
         },
         {
             timestamps: true,
