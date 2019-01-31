@@ -626,17 +626,17 @@ exports.upload_activity_image = function(req,res) {
                 res.status(400).send(err);
         else{
             var activity_id = req.body.activity_id;
-            return Activity.findByPk(activity_id)
+            return Activity.findById(activity_id)
                             .then(function(activity){
                                 activity.update({
                                     photo_path: "uploads/" + req.file.name
                                 }).then(function(){
-                                    res.send(activity.photo_path);
+                                    res.status(201).send(activity.photo_path);
                                 })
                             })
                             .catch(function(err){
                                 console.log("ERRO: " + err.message);
-                                res.send(activity.photo_path);
+                                res.status(400).send(err.message);
                             })
         }
 
