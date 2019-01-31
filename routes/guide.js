@@ -22,7 +22,7 @@ router.get('/balance',passport.authenticate('jwt',{ session: false}), guide_cont
 /* create activity */
 router.post('/create_activity',passport.authenticate('jwt', { session: false }), guide_controller.create_activity);
 
-router.post('/delete_activity',passport.authenticate('jwt', { session: false }),guide_controller.delete_activity);
+router.delete('/delete_activity',passport.authenticate('jwt', { session: false }),guide_controller.delete_activity);
 
 /* --- Bookings --- */
 

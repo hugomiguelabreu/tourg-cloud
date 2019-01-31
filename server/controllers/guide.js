@@ -582,11 +582,18 @@ exports.delete_activity = function(req,res){
                             }    
                       },{transaction: t})
                         .then(function(booking){
-                            return Activity.destroy({
-                                        where:{
-                                            id: activity_id
-                                        }
-                                        },{transaction: t})
+
+                            return Activity_Language.destroy({
+                                where: {
+                                    activity: activity_id
+                                }
+                            }, {transaction: t}).then(function (act_lang) {
+                                return Activity.destroy({
+                                    where:{
+                                        id: activity_id
+                                    }
+                                },{transaction: t})
+                            })
                         })
                 })
         })})
