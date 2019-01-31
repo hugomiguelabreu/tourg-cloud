@@ -559,7 +559,7 @@ exports.balance = function(req,res){
 };
 
 exports.delete_activity = function(req,res){
-    var activity_id = req.body.activity_id;
+    var activity_id = req.params.id;
 
 
     return sequelize.transaction(function (t) {
