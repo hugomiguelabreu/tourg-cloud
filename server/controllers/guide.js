@@ -642,3 +642,21 @@ exports.upload_activity_image = function(req,res) {
 
     });
 }
+
+ 
+exports.get_activities = function(req,res){
+      return Guide.findAll({where:{user_id: req.user.id}})
+                .then(function(guide){
+                    var guide_id = guide[0].id;
+                    return Activity.findAll({where:{
+                                                    guide_id: guide_id
+                    }}).then(function(activities){
+                            console.log("OK!");
+                            res.status(200).send(activities);
+                    })    
+                })  
+                .catch(function(err){
+                    res.status(400).send(err.message);
+                })
+    
+}
