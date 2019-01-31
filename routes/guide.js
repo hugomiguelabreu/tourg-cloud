@@ -45,5 +45,5 @@ router.get('/booking_statistics',passport.authenticate('jwt', { session: false }
 
 router.get('/revenue_statistics',passport.authenticate('jwt', { session: false }),guide_controller.revenue_statistics);
 router.post('/activity/upload_image',passport.authenticate('jwt', { session: false }),guide_controller.upload_activity_image);
-
+router.get('/activities',passport.authenticate('jwt', { session: false }),guide_controller.get_activities);
 module.exports = router;
