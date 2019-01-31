@@ -16,6 +16,7 @@ var passport = require("passport");
 var jwt = require('jsonwebtoken');
 
 var sequelize = models.sequelize;
+const Op = sequelize.Op;
 
 const stripe = require("stripe")("sk_test_uuFlZ3ucNIgOPNPwdZ9hjDyD");
 
@@ -485,15 +486,39 @@ exports.gps = function (req, res) {
 exports.booking_statistics = function (req, res) {
 
     return Activity_Date.findAll({
+        where:{
+            activity_id:{
+                [Op.in]: [sequelize.literal(' SELECT "Activities"."id" ' +
+                    'FROM "Activities" LEFT OUTER JOIN "Guides" ON "Activities"."guide_id" = "Guides"."id" ' +
+                    'WHERE "Activities"."id"  = "Activity_Date"."activity_id"')]
+            }
+        },
+        group:["Activity_Date.id", "Bookings.id"],
+        attributes: ['id','timestamp'],
+        include:{
+            model:Booking,
+            attributes: ['value'],
+            required: true
+        },
+        order: [['timestamp', 'asc']],
+    }).then(function(bookings){
+        res.status(200).send(bookings);
+    }).catch(function(err){
+        console.log(err);
+        res.status(400).send(err.message);
+    });
+
+    return Activity_Date.findAll({
         where: sequelize.literal('"Activity_Date"."activity_id" IN ( SELECT "Activity"."id" ' +
             'FROM "Activities" AS "Activity" INNER JOIN "Guides" AS "Guide" ON "Activity"."guide_id" = "Guide"."id" ' +
-            'AND "Guide"."user_id" = 2)'),
-        group:["Activity_Date.id"],
+            'AND "Guide"."id" =  ' + req.user.guide_id + ')'),
+        group:["Activity_Date.id", "Bookings.id"],
         attributes: ['id','timestamp',
             [sequelize.fn('COUNT', sequelize.col('Bookings.id')), 'n_bookings']],
         include:{
             model:Booking,
-            attributes: []
+            attributes: ['value'],
+            required: true
         },
         order: [['timestamp', 'asc']],
     }).then(function(bookings){
