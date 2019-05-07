@@ -36,3 +36,18 @@ node_modules/.bin/sequelize db:migrate
 ## Useful documentation:
 
 [sequelize docs](http://docs.sequelizejs.com/manual/installation/getting-started.html)
+
+# Team
+## Mobile team
+Adriana Pereira - [@AdrianaGrey](https://github.com/AdrianaGrey)
+
+Hugo Abreu - [@hugomiguelabreu](https://github.com/hugomiguelabreu)
+
+João Reis - [@jibreis](https://github.com/jibreis)
+
+## Cloud team
+Afonso Fontes - [@afonsopf](https://github.com/afonsopf)
+
+Bruno Renato - [@brfc](https://github.com/brfc)
+
+João Padrão - [@jpadrao](https://github.com/jpadrao)
