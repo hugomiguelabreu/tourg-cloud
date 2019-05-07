@@ -1,4 +1,6 @@
-# tourg-cloud
+# <img height='65' src="https://github.com/hugomiguelabreu/tourg-mobile-guide/blob/master/assets/images/tour-white.png"/>
+### tourg guide application - Your instant guide
+tourg is a mobile application with the pretension of offering a seamless tourist experience to the end-user.
 
 To start the server run: 
 ```
@@ -7,30 +9,30 @@ npm run start:dev
 
 # Install
 
-create postgres user and database
+Create postgres user and database
 ```
 username: app
 password: secret
 databse: tourg_dev
 ```
-install packages with 
+Install packages with 
 ```
 npm install
 ```
 
-install sequelize-cli:
+Install sequelize-cli:
 ```
 npm install --save sequelize-cli
 ```
-to run sequelize:
+Run sequelize:
 ```
 node_modules/.bin/sequelize [commnad]
 ```
-to run migrations (criar as tabelas na base de dados)
+Run migrations
 ```
 node_modules/.bin/sequelize db:migrate
 ```
 
-[sequelize docs](http://docs.sequelizejs.com/manual/installation/getting-started.html) (são uma merda)
+Useful documentation:
 
-qualquer cena perguntar ao joão que ele já sofreu
+[sequelize docs](http://docs.sequelizejs.com/manual/installation/getting-started.html)
