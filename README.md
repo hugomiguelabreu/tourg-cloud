@@ -7,7 +7,7 @@ To start the server run:
 npm run start:dev
 ```
 
-# Install
+## Install
 
 Create postgres user and database
 ```
@@ -33,6 +33,6 @@ Run migrations
 node_modules/.bin/sequelize db:migrate
 ```
 
-Useful documentation:
+## Useful documentation:
 
 [sequelize docs](http://docs.sequelizejs.com/manual/installation/getting-started.html)
