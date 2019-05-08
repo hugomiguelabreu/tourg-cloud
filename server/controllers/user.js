@@ -17,7 +17,7 @@ var jwt = require('jsonwebtoken');
 const sequelize = require("sequelize");
 const Sequelize = models.sequelize;
 
-const stripe = require("stripe")("sk_test_uuFlZ3ucNIgOPNPwdZ9hjDyD");
+const stripe = require("stripe")("#");
 
 const notifications = require('../../notifications');
 

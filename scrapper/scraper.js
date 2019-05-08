@@ -9,8 +9,8 @@ const n_places = 2;
 
 const request = require("request");
 
-const client_id = "KLNHDNOFVR5QN1JWA0KDA0HTQ0RVY0REMMICDU0MSISUTPHZ";
-const client_secret = "UDQUJRTYURYB044FTWJUQYDE0PSDGTOIM1RNV4K434IPVJZJ";
+const client_id = "#";
+const client_secret = "#";
 const base_url = "https://api.foursquare.com/v2/";
 
 function getLocations(city){

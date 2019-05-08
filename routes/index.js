@@ -13,7 +13,7 @@ let messages = [];
 
 router.get('/', (req, res) => {
     messages.push({
-        to: 'ExponentPushToken[9ZcQyeP_QD0xEoINA5RQOV]',
+        to: 'ExponentPushToken[#]',
         sound: 'default',
         title: 'Sup brahh',
         body: 'tens de mamar prota mano',
