@@ -2,6 +2,11 @@
 ### tourg guide application - Your instant guide
 tourg is a mobile application with the pretension of offering a seamless tourist experience to the end-user.
 
+[:iphone: User mobile app](https://github.com/hugomiguelabreu/tourg-mobile)
+[:iphone: Guide mobile app](https://github.com/hugomiguelabreu/tourg-mobile-guide)
+
+## Deploy
+
 To start the server run: 
 ```
 npm run start:dev
