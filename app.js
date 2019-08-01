@@ -1,6 +1,4 @@
-process.env.key= 'keykeykeykeykeykey';
-
-
+process.env.key= 'musthaveabettersecret';
 
 var createError = require('http-errors');
 var express = require('express');
