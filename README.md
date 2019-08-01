@@ -6,6 +6,8 @@ tourg is a mobile application with the pretension of offering a seamless tourist
 
 [:iphone: Guide mobile app](https://github.com/hugomiguelabreu/tourg-mobile-guide)
 
+
+
 ## Deploy
 
 To start the server run: 
